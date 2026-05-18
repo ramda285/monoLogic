@@ -10,7 +10,6 @@ import com.example.monologic.repository.TopicRepository
 import com.example.monologic.scraper.WeblioScraper
 import okhttp3.OkHttpClient
 
-// Full singleton wiring in Task 10. Stub created here so DailyWorker and BootReceiver compile.
 class MonoLogicApp : Application() {
     private val httpClient by lazy { OkHttpClient() }
 
