@@ -16,7 +16,10 @@ android {
         versionName = "1.0"
     }
     buildTypes {
-        release { isMinifyEnabled = false }
+        release {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -37,7 +40,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.17.2")                           // MIT
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3") // Apache 2.0
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // Apache 2.0
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")  // Apache 2.0
+    implementation("androidx.security:security-crypto:1.0.0")          // Apache 2.0
     implementation("androidx.room:room-runtime:2.6.1")                 // Apache 2.0
     implementation("androidx.room:room-ktx:2.6.1")                     // Apache 2.0
     kapt("androidx.room:room-compiler:2.6.1")
