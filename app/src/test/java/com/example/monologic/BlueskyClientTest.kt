@@ -57,4 +57,30 @@ class BlueskyClientTest {
         assertTrue(facets[0].index.byteStart > 0)
         assertTrue(facets[0].index.byteEnd > facets[0].index.byteStart)
     }
+
+    @Test
+    fun buildPostContent_byte_offsets_match_url_precisely() {
+        val bsky = BlueskyClient(client)
+        val word = "土星"
+        val url = "https://www.weblio.jp/content/%E5%9C%9F%E6%98%9F"
+        val (text, facets) = bsky.buildPostContent(word, url)
+        val expectedStart = "今日のお題：$word #今日のお題\n".toByteArray(Charsets.UTF_8).size
+        val expectedEnd = expectedStart + url.toByteArray(Charsets.UTF_8).size
+        assertEquals(expectedStart, facets[0].index.byteStart)
+        assertEquals(expectedEnd, facets[0].index.byteEnd)
+    }
+
+    @Test
+    fun post_returns_null_when_record_creation_fails() = runTest {
+        // Session succeeds, but createRecord fails
+        server.enqueue(MockResponse().setBody(
+            """{"accessJwt":"jwt123","did":"did:plc:abc"}"""
+        ).setResponseCode(200))
+        server.enqueue(MockResponse().setResponseCode(500))
+
+        val bsky = BlueskyClient(client, baseUrl = server.url("/").toString())
+        val uri = bsky.post("test.bsky.social", "app-pass-123", "土星",
+            "https://www.weblio.jp/content/%E5%9C%9F%E6%98%9F")
+        assertNull(uri)
+    }
 }

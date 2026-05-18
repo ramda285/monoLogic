@@ -38,13 +38,15 @@ class BlueskyClient(
     private fun createSession(handle: String, password: String): CreateSessionResponse? {
         val body = json.encodeToString(CreateSessionRequest(handle, password))
             .toRequestBody(mediaType)
-        val response = client.newCall(
+        return client.newCall(
             Request.Builder()
                 .url("$baseUrl/xrpc/com.atproto.server.createSession")
                 .post(body).build()
-        ).execute()
-        if (!response.isSuccessful) return null
-        return response.use { json.decodeFromString(it.body!!.string()) }
+        ).execute().use { response ->
+            if (!response.isSuccessful) return@use null
+            val bodyString = response.body?.string() ?: return@use null
+            json.decodeFromString(bodyString)
+        }
     }
 
     private fun createRecord(
@@ -57,16 +59,16 @@ class BlueskyClient(
         )
         val body = json.encodeToString(CreateRecordRequest(repo = did, record = record))
             .toRequestBody(mediaType)
-        val response = client.newCall(
+        return client.newCall(
             Request.Builder()
                 .url("$baseUrl/xrpc/com.atproto.repo.createRecord")
                 .post(body)
                 .header("Authorization", "Bearer $jwt")
                 .build()
-        ).execute()
-        if (!response.isSuccessful) return null
-        return response.use {
-            json.decodeFromString<CreateRecordResponse>(it.body!!.string()).uri
+        ).execute().use { response ->
+            if (!response.isSuccessful) return@use null
+            val bodyString = response.body?.string() ?: return@use null
+            json.decodeFromString<CreateRecordResponse>(bodyString).uri
         }
     }
 
