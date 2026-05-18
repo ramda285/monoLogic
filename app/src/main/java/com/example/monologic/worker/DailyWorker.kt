@@ -33,7 +33,8 @@ class DailyWorker(context: Context, params: WorkerParameters) :
         } else null
 
         // 4. DBに記録（将来フェーズのリプライ収集・AI分析の起点）
-        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        // Locale.USを使用してISO 8601形式を保証する（DBの主キーとして使用するため）
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
         app.topicRepository.saveTopic(
             TopicEntity(
                 date = today,
