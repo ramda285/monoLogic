@@ -11,7 +11,7 @@ class TopicRepository(private val dao: TopicDao) {
 
     suspend fun getTodayTopic(date: String): TopicEntity? = dao.getByDate(date)
 
-    /** LiveなFlowとして全お題を返す（MainActivityのRecyclerView更新に使用） */
+    /** 日付降順で全お題をLiveなFlowとして返す */
     fun getAllFlow(): Flow<List<TopicEntity>> = dao.getAll()
 
     // Phase 2以降: リプライ収集（スタブ）

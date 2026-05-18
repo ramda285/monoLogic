@@ -50,4 +50,18 @@ class TopicRepositoryTest {
         val emitted = repo.getAllFlow().first()
         assertEquals(2, emitted.size)
     }
+
+    @Test
+    fun getUncollected_delegates_to_dao() = runTest {
+        coEvery { dao.getUncollected() } returns emptyList()
+        repo.getUncollected()
+        coVerify(exactly = 1) { dao.getUncollected() }
+    }
+
+    @Test
+    fun getUnanalyzed_delegates_to_dao() = runTest {
+        coEvery { dao.getUnanalyzed() } returns emptyList()
+        repo.getUnanalyzed()
+        coVerify(exactly = 1) { dao.getUnanalyzed() }
+    }
 }
