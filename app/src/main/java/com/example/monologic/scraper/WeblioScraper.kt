@@ -41,9 +41,10 @@ class WeblioScraper(
             // ※ 実装時にWeblioの実際のHTML構造を確認してURLとCSSセレクタを調整すること
             val url = "$baseUrl/cat/dictionary/jtdjn/$char"
             val request = Request.Builder().url(url).build()
-            val response = client.newCall(request).execute()
-            if (!response.isSuccessful) return@withContext fallback()
-            val body = response.body?.string() ?: return@withContext fallback()
+            val body = client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) return@use null
+                response.body?.string()
+            } ?: return@withContext fallback()
             val words = Jsoup.parse(body)
                 .select(".midashigo a")
                 .map { it.text().trim() }
@@ -62,6 +63,7 @@ class WeblioScraper(
 
     private fun fallback(): WeblioResult {
         val word = fallbackWords.random()
+        // baseUrlはテスト用のモックサーバURL。フォールバック時は常に本番Weblio URLを使用する
         return WeblioResult(
             word = word,
             url = "https://www.weblio.jp/content/${URLEncoder.encode(word, "UTF-8")}"

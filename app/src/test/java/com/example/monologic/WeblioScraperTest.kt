@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.SocketPolicy
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -47,8 +48,19 @@ class WeblioScraperTest {
     }
 
     @Test
-    fun fetchRandomWord_returns_fallback_on_network_error() = runTest {
+    fun fetchRandomWord_returns_fallback_on_http_error() = runTest {
         server.enqueue(MockResponse().setResponseCode(500))
+        val scraper = WeblioScraper(client, baseUrl = server.url("/").toString())
+        val result = scraper.fetchRandomWord()
+        assertNotNull(result)
+        assertTrue(result!!.word.isNotEmpty())
+    }
+
+    @Test
+    fun fetchRandomWord_returns_fallback_on_network_error() = runTest {
+        server.enqueue(MockResponse().apply {
+            socketPolicy = SocketPolicy.DISCONNECT_AT_START
+        })
         val scraper = WeblioScraper(client, baseUrl = server.url("/").toString())
         val result = scraper.fetchRandomWord()
         assertNotNull(result)
