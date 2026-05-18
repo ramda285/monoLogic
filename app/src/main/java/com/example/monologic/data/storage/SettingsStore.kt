@@ -3,7 +3,8 @@ package com.example.monologic.data.storage
 import android.content.Context
 
 class SettingsStore(context: Context) {
-    private val prefs = context.getSharedPreferences("monologic_settings", Context.MODE_PRIVATE)
+    private val prefs = context.applicationContext
+        .getSharedPreferences("monologic_settings", Context.MODE_PRIVATE)
 
     fun saveTime(hour: Int, minute: Int) {
         prefs.edit().putInt(KEY_HOUR, hour).putInt(KEY_MINUTE, minute).apply()
