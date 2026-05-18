@@ -1,6 +1,7 @@
 package com.example.monologic.data.db
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TopicDao {
@@ -8,7 +9,7 @@ interface TopicDao {
     suspend fun upsert(topic: TopicEntity)
 
     @Query("SELECT * FROM topics ORDER BY date DESC")
-    suspend fun getAll(): List<TopicEntity>
+    fun getAll(): Flow<List<TopicEntity>>
 
     @Query("SELECT * FROM topics WHERE date = :date LIMIT 1")
     suspend fun getByDate(date: String): TopicEntity?
