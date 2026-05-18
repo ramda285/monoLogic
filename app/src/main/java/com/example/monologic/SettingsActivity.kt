@@ -31,8 +31,10 @@ class SettingsActivity : AppCompatActivity() {
             editPassword.hint = "（保存済み — 変更する場合のみ入力）"
         }
 
-        // 保存済み投稿時刻を反映
-        val (h, m) = app.settingsStore.loadTime()
+        // 保存済み投稿時刻を反映（回転後はsavedInstanceStateから復元）
+        val (h, m) = savedInstanceState?.let {
+            it.getInt("hour") to it.getInt("minute")
+        } ?: app.settingsStore.loadTime()
         selectedHour = h
         selectedMinute = m
         updateTimeButton()
@@ -57,6 +59,12 @@ class SettingsActivity : AppCompatActivity() {
             Toast.makeText(this, "保存しました", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("hour", selectedHour)
+        outState.putInt("minute", selectedMinute)
     }
 
     private fun updateTimeButton() {
