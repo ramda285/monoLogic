@@ -3,9 +3,51 @@ package com.example.monologic.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.monologic.MonoLogicApp
+import com.example.monologic.data.db.TopicEntity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-// Full implementation in Task 9. Stub created here so WorkScheduler compiles.
 class DailyWorker(context: Context, params: WorkerParameters) :
     CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result = Result.success()
+
+    override suspend fun doWork(): Result {
+        val app = applicationContext as MonoLogicApp
+
+        // 1. Weblioからランダム単語を取得（失敗時はワーカーを終了）
+        val weblioResult = app.weblioScraper.fetchRandomWord() ?: return Result.failure()
+
+        // 2. ローカル通知を表示（Bluesky投稿の成否に関わらず必ず実行）
+        app.notifier.show(weblioResult.word)
+
+        // 3. 認証情報があればBlueskyに投稿（なければスキップ）
+        val credentials = app.credentialStore.loadCredentials()
+        val postUri = if (credentials != null) {
+            app.blueskyClient.post(
+                handle = credentials.first,
+                appPassword = credentials.second,
+                word = weblioResult.word,
+                weblioUrl = weblioResult.url
+            )
+        } else null
+
+        // 4. DBに記録（将来フェーズのリプライ収集・AI分析の起点）
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        app.topicRepository.saveTopic(
+            TopicEntity(
+                date = today,
+                word = weblioResult.word,
+                weblioUrl = weblioResult.url,
+                blueskyPostUri = postUri,
+                postedAt = System.currentTimeMillis()
+            )
+        )
+
+        // 5. 翌日分のワーカーを再スケジュール
+        val (hour, minute) = app.settingsStore.loadTime()
+        WorkScheduler.schedule(applicationContext, hour, minute)
+
+        return Result.success()
+    }
 }
