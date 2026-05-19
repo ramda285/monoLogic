@@ -6,6 +6,7 @@ import androidx.security.crypto.MasterKey
 
 class CredentialStore(context: Context) {
     private val appContext = context.applicationContext
+    // MasterKey.Builder API は security-crypto:1.1.0-alpha06 以降で利用可能
     private val prefs by lazy {
         EncryptedSharedPreferences.create(
             appContext,
