@@ -59,11 +59,12 @@ class OAuthManager(
     fun updateDpopNonce(nonce: String) { dpopNonce = nonce }
 
     companion object {
-        const val CLIENT_ID = "http://localhost"
+        // GitHub Pages でホストされたクライアントメタデータ URL を client_id として使用。
+        // http://localhost は atproto スコープしか使えないため、
+        // transition:generic（書き込み権限）を得るにはホスト済みメタデータが必要。
+        const val CLIENT_ID =
+            "https://ramda285.github.io/monoLogic/client-metadata.json"
         const val REDIRECT_URI = "monologic://oauth/callback"
-        // transition:generic = Bluesky の書き込みを含む全操作を許可するスコープ
-        // http://localhost クライアントが使える唯一の書き込みスコープ
-        // （repo:* は client metadata 未宣言のため NG、atproto だけでは書き込み不可）
         const val SCOPE = "atproto transition:generic"
         const val AUTH_SERVER = "https://bsky.social"
         private const val TAG = "OAuthManager"

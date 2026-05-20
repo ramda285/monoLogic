@@ -1,0 +1,11 @@
+{
+  "client_id": "https://ramda285.github.io/monoLogic/client-metadata.json",
+  "application_type": "native",
+  "client_name": "monoLogic",
+  "dpop_bound_access_tokens": true,
+  "grant_types": ["authorization_code", "refresh_token"],
+  "redirect_uris": ["http://127.0.0.1"],
+  "response_types": ["code"],
+  "scope": "atproto transition:generic",
+  "token_endpoint_auth_method": "none"
+}
