@@ -61,9 +61,10 @@ class OAuthManager(
     companion object {
         const val CLIENT_ID = "http://localhost"
         const val REDIRECT_URI = "monologic://oauth/callback"
-        // atproto スコープ = PDS への完全アクセス（createRecord を含む）
-        // http://localhost クライアントは repo:* スコープを宣言できないため atproto のみ使用
-        const val SCOPE = "atproto"
+        // transition:generic = Bluesky の書き込みを含む全操作を許可するスコープ
+        // http://localhost クライアントが使える唯一の書き込みスコープ
+        // （repo:* は client metadata 未宣言のため NG、atproto だけでは書き込み不可）
+        const val SCOPE = "atproto transition:generic"
         const val AUTH_SERVER = "https://bsky.social"
         private const val TAG = "OAuthManager"
     }
