@@ -100,12 +100,18 @@ class SettingsActivity : AppCompatActivity() {
                     // 認可コードをトークンと交換
                     val tokens = app.oauthManager.exchangeCode(code, verifier, redirectUri)
                     if (tokens != null) {
+                        // ハンドルと PDS URL を並行して解決
                         val handle = app.oauthManager.fetchHandle(tokens.did)
+                        val pdsUrl = app.oauthManager.resolvePdsUrl(tokens.did)
                         app.credentialStore.saveOAuthTokens(
-                            tokens.accessToken, tokens.refreshToken, tokens.did, handle
+                            tokens.accessToken, tokens.refreshToken, tokens.did, handle, pdsUrl
                         )
                         val display = handle?.let { "@$it" } ?: tokens.did
-                        Toast.makeText(this@SettingsActivity, "Bluesky 接続完了: $display", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@SettingsActivity,
+                            "Bluesky 接続完了: $display (PDS: ${pdsUrl ?: "不明"})",
+                            Toast.LENGTH_LONG
+                        ).show()
                     } else {
                         Toast.makeText(this@SettingsActivity, "トークン取得失敗", Toast.LENGTH_SHORT).show()
                     }

@@ -54,6 +54,17 @@ import kotlinx.serialization.Serializable
 /** 公開プロフィール API レスポンス（ハンドル取得用） */
 @Serializable data class ProfileResponse(val handle: String)
 
+/** DID ドキュメントのサービスエントリ */
+@Serializable data class DidService(
+    val type: String,
+    val serviceEndpoint: String
+)
+
+/** DID ドキュメント（PDS URL 取得に必要な最小フィールドのみ） */
+@Serializable data class DidDocument(
+    val service: List<DidService>? = null
+)
+
 /** アプリ内で OAuth トークンを保持するデータクラス */
 data class OAuthTokens(
     val accessToken: String,

@@ -80,13 +80,16 @@ class DailyWorker(context: Context, params: WorkerParameters) :
     private suspend fun tryPost(app: MonoLogicApp, word: String, weblioUrl: String): String? {
         val oauthTokens = app.credentialStore.loadOAuthTokens()
         if (oauthTokens != null) {
+            val pdsUrl = app.credentialStore.loadOAuthPdsUrl()
+
             // まず現在のアクセストークンで試みる
             val result = app.blueskyClient.postWithOAuth(
                 accessToken = oauthTokens.accessToken,
                 did = oauthTokens.did,
                 word = word,
                 weblioUrl = weblioUrl,
-                oauthManager = app.oauthManager
+                oauthManager = app.oauthManager,
+                pdsUrl = pdsUrl
             )
             if (result != null) return result
 
@@ -95,14 +98,15 @@ class DailyWorker(context: Context, params: WorkerParameters) :
             if (newTokens != null) {
                 val handle = app.credentialStore.loadOAuthHandle()
                 app.credentialStore.saveOAuthTokens(
-                    newTokens.accessToken, newTokens.refreshToken, newTokens.did, handle
+                    newTokens.accessToken, newTokens.refreshToken, newTokens.did, handle, pdsUrl
                 )
                 return app.blueskyClient.postWithOAuth(
                     accessToken = newTokens.accessToken,
                     did = newTokens.did,
                     word = word,
                     weblioUrl = weblioUrl,
-                    oauthManager = app.oauthManager
+                    oauthManager = app.oauthManager,
+                    pdsUrl = pdsUrl
                 )
             }
             return null

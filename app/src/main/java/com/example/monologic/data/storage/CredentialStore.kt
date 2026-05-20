@@ -46,13 +46,15 @@ class CredentialStore(context: Context) {
         accessToken: String,
         refreshToken: String,
         did: String,
-        handle: String?
+        handle: String?,
+        pdsUrl: String? = null
     ) {
         prefs.edit()
             .putString(KEY_OAUTH_ACCESS, accessToken)
             .putString(KEY_OAUTH_REFRESH, refreshToken)
             .putString(KEY_OAUTH_DID, did)
             .putString(KEY_OAUTH_HANDLE, handle)
+            .putString(KEY_OAUTH_PDS, pdsUrl)
             .apply()
     }
 
@@ -66,12 +68,16 @@ class CredentialStore(context: Context) {
     /** 保存済みのハンドル文字列を返す（表示用）。未接続時は null。 */
     fun loadOAuthHandle(): String? = prefs.getString(KEY_OAUTH_HANDLE, null)
 
+    /** 保存済みの PDS エンドポイント URL を返す。未設定時は null。 */
+    fun loadOAuthPdsUrl(): String? = prefs.getString(KEY_OAUTH_PDS, null)
+
     fun clearOAuthTokens() {
         prefs.edit()
             .remove(KEY_OAUTH_ACCESS)
             .remove(KEY_OAUTH_REFRESH)
             .remove(KEY_OAUTH_DID)
             .remove(KEY_OAUTH_HANDLE)
+            .remove(KEY_OAUTH_PDS)
             .apply()
     }
 
@@ -122,6 +128,7 @@ class CredentialStore(context: Context) {
         private const val KEY_OAUTH_REFRESH = "oauth_refresh_token"
         private const val KEY_OAUTH_DID = "oauth_did"
         private const val KEY_OAUTH_HANDLE = "oauth_handle"
+        private const val KEY_OAUTH_PDS = "oauth_pds_url"
         private const val KEY_DPOP_PRIV = "dpop_private_key"
         private const val KEY_DPOP_PUB = "dpop_public_key"
     }

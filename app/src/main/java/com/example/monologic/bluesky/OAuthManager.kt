@@ -212,6 +212,36 @@ class OAuthManager(
         return "$message.${derToJose(derSig).b64url()}"
     }
 
+    // ─── DID 解決 / PDS 検出 ────────────────────────────────────────────
+
+    /**
+     * DID ドキュメントを解決してユーザーの PDS エンドポイント URL を返す。
+     *
+     * - did:plc:xxx → https://plc.directory/did:plc:xxx
+     * - did:web:xxx → https://xxx/.well-known/did.json
+     *
+     * DID ドキュメントの service 配列から type="AtprotoPersonalDataServer" の
+     * serviceEndpoint を取り出す。失敗時は null を返す。
+     */
+    suspend fun resolvePdsUrl(did: String): String? = withContext(Dispatchers.IO) {
+        try {
+            val docUrl = when {
+                did.startsWith("did:plc:") -> "https://plc.directory/$did"
+                did.startsWith("did:web:") ->
+                    "https://${did.removePrefix("did:web:")}/.well-known/did.json"
+                else -> return@withContext null
+            }
+            val body = httpClient.newCall(Request.Builder().url(docUrl).build())
+                .execute().use { it.body?.string() } ?: return@withContext null
+            Log.d(TAG, "DID doc for $did: $body")
+            json.decodeFromString<DidDocument>(body)
+                .service?.find { it.type == "AtprotoPersonalDataServer" }?.serviceEndpoint
+        } catch (e: Exception) {
+            Log.e(TAG, "resolvePdsUrl failed for $did", e)
+            null
+        }
+    }
+
     // ─── プロフィール取得 ─────────────────────────────────────────────────
 
     /**

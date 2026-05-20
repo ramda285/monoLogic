@@ -96,12 +96,16 @@ class BlueskyClient(
         did: String,
         word: String,
         weblioUrl: String,
-        oauthManager: OAuthManager
+        oauthManager: OAuthManager,
+        pdsUrl: String? = null          // DID ドキュメントから解決した PDS エンドポイント
     ): String? = withContext(Dispatchers.IO) {
         lastError = null
         try {
             val (text, facets) = buildPostContent(word, weblioUrl)
-            val recordUrl = "$baseUrl/xrpc/com.atproto.repo.createRecord"
+            // PDS URL が指定されていればそちらを使う（bsky.social はエントリウェイのため NG）
+            val pdsBase = pdsUrl ?: baseUrl
+            val recordUrl = "$pdsBase/xrpc/com.atproto.repo.createRecord"
+            Log.d(TAG, "postWithOAuth pdsBase=$pdsBase")
             val bodyJson = json.encodeToString(
                 CreateRecordRequest(
                     repo = did,
