@@ -13,13 +13,21 @@ class WeblioScraper(
     private val client: OkHttpClient,
     private val baseUrl: String = "https://www.weblio.jp"
 ) {
-    private val hiraganaList = listOf(
-        "あ","い","う","え","お","か","き","く","け","こ",
-        "さ","し","す","せ","そ","た","ち","つ","て","と",
-        "な","に","ぬ","ね","の","は","ひ","ふ","へ","ほ",
-        "ま","み","む","め","も","や","ゆ","よ",
-        "ら","り","る","れ","ろ","わ"
+    // Weblio の /category/{slug1}-{slug2} URL に使うひらがな→スラグ対応表
+    private val hiraganaToSlug = mapOf(
+        "あ" to "aa",  "い" to "ii",  "う" to "uu",  "え" to "ee",  "お" to "oo",
+        "か" to "ka",  "き" to "ki",  "く" to "ku",  "け" to "ke",  "こ" to "ko",
+        "さ" to "sa",  "し" to "shi", "す" to "su",  "せ" to "se",  "そ" to "so",
+        "た" to "ta",  "ち" to "chi", "つ" to "tsu", "て" to "te",  "と" to "to",
+        "な" to "na",  "に" to "ni",  "ぬ" to "nu",  "ね" to "ne",  "の" to "no",
+        "は" to "ha",  "ひ" to "hi",  "ふ" to "fu",  "へ" to "he",  "ほ" to "ho",
+        "ま" to "ma",  "み" to "mi",  "む" to "mu",  "め" to "me",  "も" to "mo",
+        "や" to "ya",  "ゆ" to "yu",  "よ" to "yo",
+        "ら" to "ra",  "り" to "ri",  "る" to "ru",  "れ" to "re",  "ろ" to "ro",
+        "わ" to "wa"
     )
+
+    private val hiraganaList = hiraganaToSlug.keys.toList()
 
     // フォールバック用内蔵単語リスト（Weblio取得失敗時に使用）
     private val fallbackWords = listOf(
@@ -37,18 +45,24 @@ class WeblioScraper(
 
     suspend fun fetchRandomWord(): WeblioResult? = withContext(Dispatchers.IO) {
         try {
-            val char = hiraganaList.random()
-            // ※ 実装時にWeblioの実際のHTML構造を確認してURLとCSSセレクタを調整すること
-            val url = "$baseUrl/cat/dictionary/jtdjn/$char"
-            val request = Request.Builder().url(url).build()
+            val slug1 = hiraganaToSlug[hiraganaList.random()]!!
+            val slug2 = hiraganaToSlug[hiraganaList.random()]!!
+            val url = "$baseUrl/category/$slug1-$slug2"
+            val request = Request.Builder()
+                .url(url)
+                .header("User-Agent", "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36")
+                .build()
             val body = client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) return@use null
                 response.body?.string()
             } ?: return@withContext fallback()
+
+            // href に "/content/" を含むリンクのみを単語エントリとして抽出
             val words = Jsoup.parse(body)
-                .select(".midashigo a")
+                .select("li > a[href*='/content/']")
                 .map { it.text().trim() }
                 .filter { it.isNotEmpty() }
+
             if (words.isEmpty()) fallback() else {
                 val word = words.random()
                 WeblioResult(
@@ -63,7 +77,7 @@ class WeblioScraper(
 
     private fun fallback(): WeblioResult {
         val word = fallbackWords.random()
-        // baseUrlはテスト用のモックサーバURL。フォールバック時は常に本番Weblio URLを使用する
+        // baseUrl はテスト用モックサーバ URL の場合がある。フォールバック時は常に本番 URL を使用
         return WeblioResult(
             word = word,
             url = "https://www.weblio.jp/content/${URLEncoder.encode(word, "UTF-8")}"

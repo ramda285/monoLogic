@@ -5,45 +5,59 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Bluesky 接続セクション -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bluesky ハンドル"
-        android:textSize="14sp"/>
-
-    <EditText
-        android:id="@+id/editHandle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="xxx.bsky.social"
-        android:inputType="text"/>
+        android:text="Bluesky 連携"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <TextView
+        android:id="@+id/tvConnectionStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="App Password"
+        android:text="未接続"
         android:textSize="14sp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="8dp"/>
 
-    <EditText
-        android:id="@+id/editPassword"
+    <Button
+        android:id="@+id/btnConnect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="xxxx-xxxx-xxxx-xxxx"
-        android:inputType="textPassword"/>
+        android:text="Bluesky でログイン"
+        android:layout_marginTop="12dp"/>
 
+    <Button
+        android:id="@+id/btnDisconnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="接続解除"
+        android:enabled="false"
+        android:layout_marginTop="4dp"/>
+
+    <!-- 区切り線 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 投稿時刻セクション -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="投稿時刻"
-        android:textSize="14sp"
-        android:layout_marginTop="16dp"/>
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/btnTimePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="08:00"/>
+        android:text="08:00"
+        android:layout_marginTop="8dp"/>
 
     <Button
         android:id="@+id/btnSave"

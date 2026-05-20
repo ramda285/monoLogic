@@ -2,6 +2,7 @@ package com.example.monologic
 
 import android.app.Application
 import com.example.monologic.bluesky.BlueskyClient
+import com.example.monologic.bluesky.OAuthManager
 import com.example.monologic.data.db.AppDatabase
 import com.example.monologic.data.storage.CredentialStore
 import com.example.monologic.data.storage.SettingsStore
@@ -20,5 +21,18 @@ class MonoLogicApp : Application() {
     val notifier by lazy { Notifier(this) }
     val topicRepository by lazy {
         TopicRepository(AppDatabase.getInstance(this).topicDao())
+    }
+
+    /**
+     * AT Protocol OAuth マネージャー。
+     * DPoP 鍵ペアは CredentialStore に永続化されるため、
+     * アプリ再起動後も同じ鍵を使い続ける。
+     */
+    val oauthManager by lazy {
+        OAuthManager(
+            context = this,
+            httpClient = httpClient,
+            keyPair = credentialStore.loadOrCreateDpopKeyPair()
+        )
     }
 }

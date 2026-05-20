@@ -46,6 +46,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3") // Apache 2.0
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // Apache 2.0
     implementation("androidx.security:security-crypto:1.1.0-alpha06")   // Apache 2.0
+    implementation("androidx.browser:browser:1.8.0")                   // Apache 2.0 (Custom Tabs)
     implementation("androidx.room:room-runtime:2.6.1")                 // Apache 2.0
     implementation("androidx.room:room-ktx:2.6.1")                     // Apache 2.0
     kapt("androidx.room:room-compiler:2.6.1")

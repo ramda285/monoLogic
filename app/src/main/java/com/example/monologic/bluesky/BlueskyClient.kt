@@ -73,6 +73,50 @@ class BlueskyClient(
     }
 
     /**
+     * OAuth アクセストークン（DPoP バインド）を使って Bluesky に投稿する。
+     * Authorization ヘッダは "DPoP {token}"、DPoP プルーフは ath クレーム付き。
+     * 成功時は投稿 URI、失敗時は null を返す。
+     */
+    suspend fun postWithOAuth(
+        accessToken: String,
+        did: String,
+        word: String,
+        weblioUrl: String,
+        oauthManager: OAuthManager
+    ): String? = withContext(Dispatchers.IO) {
+        try {
+            val (text, facets) = buildPostContent(word, weblioUrl)
+            val recordUrl = "$baseUrl/xrpc/com.atproto.repo.createRecord"
+            val dpopProof = oauthManager.createDpopProof(
+                method = "POST",
+                url = recordUrl,
+                accessToken = accessToken
+            )
+            val record = PostRecord(
+                text = text,
+                createdAt = Instant.now().toString(),
+                facets = facets
+            )
+            val body = json.encodeToString(CreateRecordRequest(repo = did, record = record))
+                .toRequestBody(mediaType)
+            client.newCall(
+                Request.Builder()
+                    .url(recordUrl)
+                    .post(body)
+                    .header("Authorization", "DPoP $accessToken")
+                    .header("DPoP", dpopProof)
+                    .build()
+            ).execute().use { response ->
+                if (!response.isSuccessful) return@use null
+                val bodyStr = response.body?.string() ?: return@use null
+                json.decodeFromString<CreateRecordResponse>(bodyStr).uri
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
      * 投稿テキストとfacets（リンク情報）を生成する。
      * テスト可能なようにinternal visibilityではなくpublicにしている。
      *

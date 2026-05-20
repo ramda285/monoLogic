@@ -20,10 +20,13 @@ class WeblioScraperTest {
 
     @Test
     fun fetchRandomWord_parses_word_from_html() = runTest {
+        // Weblio /category/{slug1}-{slug2} の実際の HTML 構造を再現
         val html = """
             <html><body>
-              <div class="midashigo"><a href="/content/%E5%9C%9F%E6%98%9F">土星</a></div>
-              <div class="midashigo"><a href="/content/%E6%B5%B7">海</a></div>
+              <ul>
+                <li><a href="/content/%E5%9C%9F%E6%98%9F">土星</a></li>
+                <li><a href="/content/%E6%B5%B7">海</a></li>
+              </ul>
             </body></html>
         """.trimIndent()
         server.enqueue(MockResponse().setBody(html).setResponseCode(200))

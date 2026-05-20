@@ -30,3 +30,33 @@ import kotlinx.serialization.Serializable
 )
 
 @Serializable data class CreateRecordResponse(val uri: String, val cid: String)
+
+// ── AT Protocol OAuth ──────────────────────────────────────────────────────
+
+/** PAR エンドポイントのレスポンス */
+@Serializable data class ParResponse(
+    @SerialName("request_uri") val requestUri: String
+)
+
+/** トークンエンドポイントのレスポンス（code 交換・リフレッシュ共通） */
+@Serializable data class TokenResponse(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("refresh_token") val refreshToken: String,
+    val sub: String              // ユーザーの DID
+)
+
+/** トークンエンドポイントのエラーレスポンス */
+@Serializable data class OAuthErrorResponse(
+    val error: String,
+    @SerialName("error_description") val errorDescription: String? = null
+)
+
+/** 公開プロフィール API レスポンス（ハンドル取得用） */
+@Serializable data class ProfileResponse(val handle: String)
+
+/** アプリ内で OAuth トークンを保持するデータクラス */
+data class OAuthTokens(
+    val accessToken: String,
+    val refreshToken: String,
+    val did: String
+)
