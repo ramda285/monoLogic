@@ -62,7 +62,7 @@ class SettingsActivity : AppCompatActivity() {
 
                 try {
                     val port = server.start()
-                    val redirectUri = "http://localhost:$port/callback"
+                    val redirectUri = "http://127.0.0.1:$port/callback"
 
                     val verifier = app.oauthManager.generateCodeVerifier()
                     val state = app.oauthManager.generateState()
