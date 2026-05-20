@@ -46,28 +46,47 @@ class BlueskyClientTest {
     }
 
     @Test
-    fun buildPostContent_includes_word_url_and_facet() {
+    fun buildPostContent_format_and_facet_count() {
         val bsky = BlueskyClient(client)
         val (text, facets) = bsky.buildPostContent(
             "土星", "https://www.weblio.jp/content/%E5%9C%9F%E6%98%9F"
         )
-        assertTrue(text.contains("土星"))
+        // テキスト形式の確認
+        assertTrue(text.startsWith("#今日のお題：土星"))
         assertTrue(text.contains("https://www.weblio.jp/content/"))
-        assertEquals(1, facets.size)
-        assertTrue(facets[0].index.byteStart > 0)
-        assertTrue(facets[0].index.byteEnd > facets[0].index.byteStart)
+        assertTrue(text.endsWith("#monoLogic"))
+        // facet が3つ（#今日のお題、URL、#monoLogic）
+        assertEquals(3, facets.size)
     }
 
     @Test
-    fun buildPostContent_byte_offsets_match_url_precisely() {
+    fun buildPostContent_byte_offsets_are_correct() {
         val bsky = BlueskyClient(client)
         val word = "土星"
         val url = "https://www.weblio.jp/content/%E5%9C%9F%E6%98%9F"
         val (text, facets) = bsky.buildPostContent(word, url)
-        val expectedStart = "今日のお題：$word #今日のお題\n".toByteArray(Charsets.UTF_8).size
-        val expectedEnd = expectedStart + url.toByteArray(Charsets.UTF_8).size
-        assertEquals(expectedStart, facets[0].index.byteStart)
-        assertEquals(expectedEnd, facets[0].index.byteEnd)
+
+        fun String.byteLen() = toByteArray(Charsets.UTF_8).size
+
+        // facet[0]: #今日のお題（ハッシュタグ）
+        assertEquals(0, facets[0].index.byteStart)
+        assertEquals("#今日のお題".byteLen(), facets[0].index.byteEnd)
+        assertEquals("今日のお題", facets[0].features[0].tag)
+
+        // facet[1]: URL（リンク）
+        val urlStart = "#今日のお題：$word\n".byteLen()
+        assertEquals(urlStart, facets[1].index.byteStart)
+        assertEquals(urlStart + url.byteLen(), facets[1].index.byteEnd)
+        assertEquals(url, facets[1].features[0].uri)
+
+        // facet[2]: #monoLogic（ハッシュタグ）
+        val tag2Start = "#今日のお題：$word\n$url\n".byteLen()
+        assertEquals(tag2Start, facets[2].index.byteStart)
+        assertEquals(tag2Start + "#monoLogic".byteLen(), facets[2].index.byteEnd)
+        assertEquals("monoLogic", facets[2].features[0].tag)
+
+        // テキスト全体のバイト長と最後の facet の終端が一致する
+        assertEquals(text.byteLen(), facets[2].index.byteEnd)
     }
 
     @Test

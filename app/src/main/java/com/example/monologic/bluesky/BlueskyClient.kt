@@ -17,7 +17,8 @@ class BlueskyClient(
 ) {
     private val json = Json {
         ignoreUnknownKeys = true
-        encodeDefaults = true   // $type / collection などデフォルト値フィールドを必ず出力
+        encodeDefaults = true    // $type / collection などデフォルト値フィールドを必ず出力
+        explicitNulls = false    // null フィールドを出力しない（FacetFeature の uri/tag）
     }
     private val mediaType = "application/json; charset=utf-8".toMediaType()
 
@@ -198,25 +199,49 @@ class BlueskyClient(
         Regex("""nonce="([^"]+)"""").find(wwwAuthenticate)?.groupValues?.getOrNull(1)
 
     /**
-     * 投稿テキストとfacets（リンク情報）を生成する。
-     * テスト可能なようにinternal visibilityではなくpublicにしている。
+     * 投稿テキストと facets（リンク・ハッシュタグ情報）を生成する。
      *
      * テキスト形式:
-     *   今日のお題：{word} #今日のお題
+     *   #今日のお題：{word}
      *   {weblioUrl}
+     *   #monoLogic
      *
-     * facetsはUTF-8バイトオフセットでURLの範囲を指定する。
-     * 日本語1文字 = 3バイトのため、文字数ではなくバイト数で計算する。
+     * facets は UTF-8 バイトオフセットで範囲を指定する。
+     * 日本語1文字 = 3バイト、# や ASCII = 1バイト。
      */
     fun buildPostContent(word: String, weblioUrl: String): Pair<String, List<Facet>> {
-        val prefix = "今日のお題：$word #今日のお題\n"
-        val text = prefix + weblioUrl
-        val byteStart = prefix.toByteArray(Charsets.UTF_8).size
-        val byteEnd = text.toByteArray(Charsets.UTF_8).size
+        val htag1    = "#今日のお題"          // ハッシュタグ部分のみ
+        val line1    = "$htag1：$word"
+        val line2    = weblioUrl
+        val htag2    = "#monoLogic"
+        val text     = "$line1\n$line2\n$htag2"
+
+        fun String.byteLen() = toByteArray(Charsets.UTF_8).size
+
+        // ── facet 1: #今日のお題（ハッシュタグ） ─────────────────────────
+        val htag1Start = 0
+        val htag1End   = htag1.byteLen()
+
+        // ── facet 2: URL（リンク） ────────────────────────────────────────
+        val urlStart = "$line1\n".byteLen()
+        val urlEnd   = urlStart + line2.byteLen()
+
+        // ── facet 3: #monoLogic（ハッシュタグ） ───────────────────────────
+        val htag2Start = "$line1\n$line2\n".byteLen()
+        val htag2End   = htag2Start + htag2.byteLen()
+
         val facets = listOf(
             Facet(
-                index = FacetIndex(byteStart, byteEnd),
-                features = listOf(FacetFeature(uri = weblioUrl))
+                index    = FacetIndex(htag1Start, htag1End),
+                features = listOf(FacetFeature(type = "app.bsky.richtext.facet#tag", tag = "今日のお題"))
+            ),
+            Facet(
+                index    = FacetIndex(urlStart, urlEnd),
+                features = listOf(FacetFeature(type = "app.bsky.richtext.facet#link", uri = weblioUrl))
+            ),
+            Facet(
+                index    = FacetIndex(htag2Start, htag2End),
+                features = listOf(FacetFeature(type = "app.bsky.richtext.facet#tag", tag = "monoLogic"))
             )
         )
         return Pair(text, facets)

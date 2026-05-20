@@ -9,9 +9,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable data class FacetIndex(val byteStart: Int, val byteEnd: Int)
 
+/**
+ * Facet の機能を表すクラス。
+ * - リンク: type = "app.bsky.richtext.facet#link"、uri に URL を指定
+ * - ハッシュタグ: type = "app.bsky.richtext.facet#tag"、tag に # なしの文字列を指定
+ * uri / tag は一方のみ使用し、不要な方は null にする。
+ * Json(explicitNulls=false) により null フィールドは出力されない。
+ */
 @Serializable data class FacetFeature(
-    @SerialName("\$type") val type: String = "app.bsky.richtext.facet#link",
-    val uri: String
+    @SerialName("\$type") val type: String,
+    val uri: String? = null,
+    val tag: String? = null
 )
 
 @Serializable data class Facet(val index: FacetIndex, val features: List<FacetFeature>)
