@@ -79,10 +79,18 @@ class BlueskyClient(
 
     /**
      * OAuth アクセストークン（DPoP バインド）を使って Bluesky に投稿する。
-     * Authorization ヘッダは "DPoP {token}"、DPoP プルーフは ath クレーム付き。
-     * use_dpop_nonce エラー時は nonce を更新して1回リトライする。
+     *
+     * - Authorization: DPoP {token}
+     * - DPoP: {proof with ath claim}
+     * - use_dpop_nonce エラー時は DPoP-Nonce / WWW-Authenticate 両ヘッダーを確認して
+     *   nonce を更新し1回リトライする
+     *
      * 成功時は投稿 URI、失敗時は null を返す。
+     * 失敗理由は lastError プロパティで取得できる（DailyWorker の通知用）。
      */
+    var lastError: String? = null
+        private set
+
     suspend fun postWithOAuth(
         accessToken: String,
         did: String,
@@ -90,6 +98,7 @@ class BlueskyClient(
         weblioUrl: String,
         oauthManager: OAuthManager
     ): String? = withContext(Dispatchers.IO) {
+        lastError = null
         try {
             val (text, facets) = buildPostContent(word, weblioUrl)
             val recordUrl = "$baseUrl/xrpc/com.atproto.repo.createRecord"
@@ -104,56 +113,76 @@ class BlueskyClient(
                 )
             )
 
-            // 1回の HTTP 試行。成功時は URI、失敗時は null を返す。
-            // nonce が更新された場合は呼び出し元が再試行する。
             fun attempt(attemptNum: Int): String? {
                 val proof = oauthManager.createDpopProof(
                     method = "POST",
                     url = recordUrl,
                     accessToken = accessToken
                 )
-                val response = client.newCall(
-                    Request.Builder()
-                        .url(recordUrl)
-                        .post(bodyJson.toRequestBody(mediaType))
-                        .header("Authorization", "DPoP $accessToken")
-                        .header("DPoP", proof)
-                        .build()
-                ).execute()
 
-                val statusCode = response.code
-                val bodyStr = response.body?.string()
-                val newNonce = response.header("DPoP-Nonce")
-                response.close()
+                val (statusCode, bodyStr, dpopNonceHeader, wwwAuth) =
+                    client.newCall(
+                        Request.Builder()
+                            .url(recordUrl)
+                            .post(bodyJson.toRequestBody(mediaType))
+                            .header("Authorization", "DPoP $accessToken")
+                            .header("DPoP", proof)
+                            .build()
+                    ).execute().use { r ->
+                        // 4つまとめて取得（use {} 内で body を読み切る）
+                        listOf(
+                            r.code,
+                            r.body?.string() ?: "",
+                            r.header("DPoP-Nonce"),
+                            r.header("WWW-Authenticate")
+                        )
+                    }
 
-                Log.d(TAG, "postWithOAuth #$attemptNum status=$statusCode nonce=$newNonce body=$bodyStr")
+                Log.d(
+                    TAG,
+                    "postWithOAuth #$attemptNum status=$statusCode " +
+                        "DPoP-Nonce=$dpopNonceHeader WWW-Auth=$wwwAuth body=$bodyStr"
+                )
 
-                if (newNonce != null) oauthManager.updateDpopNonce(newNonce)
+                // DPoP-Nonce ヘッダーを優先して更新
+                (dpopNonceHeader as? String)?.let { oauthManager.updateDpopNonce(it) }
 
-                if (statusCode in 200..299 && bodyStr != null) {
+                // DPoP-Nonce がなければ WWW-Authenticate から nonce を抽出
+                if (dpopNonceHeader == null) {
+                    (wwwAuth as? String)?.let { header ->
+                        extractNonce(header)?.let { oauthManager.updateDpopNonce(it) }
+                    }
+                }
+
+                if ((statusCode as Int) in 200..299 && (bodyStr as String).isNotEmpty()) {
                     return json.decodeFromString<CreateRecordResponse>(bodyStr).uri
                 }
 
-                val errorCode = bodyStr?.let {
-                    runCatching { json.decodeFromString<OAuthErrorResponse>(it).error }.getOrNull()
-                }
-                Log.e(TAG, "postWithOAuth #$attemptNum failed: status=$statusCode error=$errorCode")
+                lastError = "HTTP $statusCode: $bodyStr"
+                Log.e(TAG, "postWithOAuth #$attemptNum failed: $lastError wwwAuth=$wwwAuth")
                 return null
             }
 
-            // 1回目
             val first = attempt(1)
             if (first != null) return@withContext first
 
             // nonce が更新されていれば2回目を試みる
-            Log.d(TAG, "postWithOAuth retrying with updated nonce=${oauthManager.dpopNonce}")
+            Log.d(TAG, "postWithOAuth retrying with nonce=${oauthManager.dpopNonce}")
             attempt(2)
 
         } catch (e: Exception) {
+            lastError = e.message ?: "exception"
             Log.e(TAG, "postWithOAuth exception", e)
             null
         }
     }
+
+    /**
+     * WWW-Authenticate ヘッダーから DPoP nonce を抽出する。
+     * 例: `DPoP error="use_dpop_nonce", algs="ES256", nonce="abc123"`
+     */
+    private fun extractNonce(wwwAuthenticate: String): String? =
+        Regex("""nonce="([^"]+)"""").find(wwwAuthenticate)?.groupValues?.getOrNull(1)
 
     /**
      * 投稿テキストとfacets（リンク情報）を生成する。

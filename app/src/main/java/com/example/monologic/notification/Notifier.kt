@@ -46,8 +46,31 @@ class Notifier(context: Context) {
         )
     }
 
+    /** 投稿失敗などのエラーを通知で表示する（デバッグ用）。 */
+    fun showError(title: String, message: String) {
+        val pendingIntent = PendingIntent.getActivity(
+            appContext, 1,
+            Intent(Intent.ACTION_VIEW, Uri.parse("https://bsky.app")).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        manager.notify(
+            NOTIFICATION_ERROR_ID,
+            NotificationCompat.Builder(appContext, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .build()
+        )
+    }
+
     companion object {
         const val CHANNEL_ID = "daily_topic"
         const val NOTIFICATION_ID = 1001
+        const val NOTIFICATION_ERROR_ID = 1002
     }
 }

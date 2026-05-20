@@ -30,6 +30,12 @@ class DailyWorker(context: Context, params: WorkerParameters) :
             ?: "https://bsky.app"
         app.notifier.show(weblioResult.word, tapUrl)
 
+        // 投稿失敗時はエラー内容を別通知で表示（デバッグ用）
+        if (postUri == null && app.credentialStore.loadOAuthTokens() != null) {
+            val errMsg = app.blueskyClient.lastError ?: "投稿失敗（詳細不明）"
+            app.notifier.showError("Bluesky 投稿失敗", errMsg)
+        }
+
         // 4. DBに記録（将来フェーズのリプライ収集・AI分析の起点）
         // Locale.USを使用してISO 8601形式を保証する（DBの主キーとして使用するため）
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
