@@ -5,8 +5,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.core.app.NotificationCompat
-import com.example.monologic.MainActivity
 
 class Notifier(context: Context) {
     private val appContext = context.applicationContext
@@ -20,11 +20,17 @@ class Notifier(context: Context) {
         )
     }
 
-    fun show(word: String) {
+    /**
+     * 通知を表示する。
+     * @param word      お題の単語
+     * @param tapUrl    タップ時に開く URL。
+     *                  投稿成功時は Bluesky の投稿 URL、未投稿時は "https://bsky.app"。
+     */
+    fun show(word: String, tapUrl: String = "https://bsky.app") {
         val pendingIntent = PendingIntent.getActivity(
             appContext, 0,
-            Intent(appContext, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            Intent(Intent.ACTION_VIEW, Uri.parse(tapUrl)).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

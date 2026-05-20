@@ -1,5 +1,6 @@
 package com.example.monologic.bluesky
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
@@ -16,6 +17,10 @@ class BlueskyClient(
 ) {
     private val json = Json { ignoreUnknownKeys = true }
     private val mediaType = "application/json; charset=utf-8".toMediaType()
+
+    companion object {
+        private const val TAG = "BlueskyClient"
+    }
 
     /**
      * お題をBlueskyに投稿する。成功時は投稿URI（at://...形式）、失敗時はnullを返す。
@@ -75,6 +80,7 @@ class BlueskyClient(
     /**
      * OAuth アクセストークン（DPoP バインド）を使って Bluesky に投稿する。
      * Authorization ヘッダは "DPoP {token}"、DPoP プルーフは ath クレーム付き。
+     * use_dpop_nonce エラー時は nonce を更新して1回リトライする。
      * 成功時は投稿 URI、失敗時は null を返す。
      */
     suspend fun postWithOAuth(
@@ -87,31 +93,55 @@ class BlueskyClient(
         try {
             val (text, facets) = buildPostContent(word, weblioUrl)
             val recordUrl = "$baseUrl/xrpc/com.atproto.repo.createRecord"
-            val dpopProof = oauthManager.createDpopProof(
-                method = "POST",
-                url = recordUrl,
-                accessToken = accessToken
-            )
             val record = PostRecord(
                 text = text,
                 createdAt = Instant.now().toString(),
                 facets = facets
             )
-            val body = json.encodeToString(CreateRecordRequest(repo = did, record = record))
-                .toRequestBody(mediaType)
-            client.newCall(
-                Request.Builder()
-                    .url(recordUrl)
-                    .post(body)
-                    .header("Authorization", "DPoP $accessToken")
-                    .header("DPoP", dpopProof)
-                    .build()
-            ).execute().use { response ->
-                if (!response.isSuccessful) return@use null
-                val bodyStr = response.body?.string() ?: return@use null
-                json.decodeFromString<CreateRecordResponse>(bodyStr).uri
+            val bodyBytes = json.encodeToString(CreateRecordRequest(repo = did, record = record))
+
+            var result: String? = null
+            repeat(2) { attempt ->
+                if (result != null) return@repeat
+                val dpopProof = oauthManager.createDpopProof(
+                    method = "POST",
+                    url = recordUrl,
+                    accessToken = accessToken
+                )
+                val (statusCode, bodyStr, newNonce) = client.newCall(
+                    Request.Builder()
+                        .url(recordUrl)
+                        .post(bodyBytes.toRequestBody(mediaType))
+                        .header("Authorization", "DPoP $accessToken")
+                        .header("DPoP", dpopProof)
+                        .build()
+                ).execute().use { r ->
+                    Triple(r.code, r.body?.string(), r.header("DPoP-Nonce"))
+                }
+
+                Log.d(TAG, "postWithOAuth attempt=$attempt status=$statusCode nonce=$newNonce body=$bodyStr")
+
+                if (newNonce != null) oauthManager.updateDpopNonce(newNonce)
+
+                if (statusCode in 200..299 && bodyStr != null) {
+                    result = json.decodeFromString<CreateRecordResponse>(bodyStr).uri
+                    return@repeat
+                }
+
+                val errorCode = bodyStr?.let {
+                    runCatching { json.decodeFromString<OAuthErrorResponse>(it).error }.getOrNull()
+                }
+                // use_dpop_nonce かつノンスを受け取った場合のみリトライ
+                if (errorCode == "use_dpop_nonce" && newNonce != null && attempt == 0) {
+                    Log.d(TAG, "Retrying postWithOAuth with DPoP nonce: $newNonce")
+                    return@repeat
+                }
+                // それ以外は即終了
+                Log.e(TAG, "postWithOAuth failed: status=$statusCode body=$bodyStr")
             }
+            result
         } catch (e: Exception) {
+            Log.e(TAG, "postWithOAuth exception", e)
             null
         }
     }

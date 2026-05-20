@@ -18,14 +18,17 @@ class DailyWorker(context: Context, params: WorkerParameters) :
         // 1. Weblioからランダム単語を取得（失敗時はワーカーを終了）
         val weblioResult = app.weblioScraper.fetchRandomWord() ?: return Result.failure()
 
-        // 2. ローカル通知を表示（Bluesky投稿の成否に関わらず必ず実行）
-        app.notifier.show(weblioResult.word)
-
-        // 3. Bluesky に投稿
+        // 2. Bluesky に投稿（通知 URL に使うため先に実行）
         //    OAuth トークンがあれば優先して使用。
         //    トークン期限切れ（401）の場合はリフレッシュを試みる。
         //    OAuth 未設定なら App Password にフォールバック。
         val postUri = tryPost(app, weblioResult.word, weblioResult.url)
+
+        // 3. ローカル通知を表示
+        //    投稿成功時はその投稿の URL、未投稿時は Bluesky トップを開く
+        val tapUrl = postUri?.let { atUriToWebUrl(it, app.credentialStore.loadOAuthHandle()) }
+            ?: "https://bsky.app"
+        app.notifier.show(weblioResult.word, tapUrl)
 
         // 4. DBに記録（将来フェーズのリプライ収集・AI分析の起点）
         // Locale.USを使用してISO 8601形式を保証する（DBの主キーとして使用するため）
@@ -45,6 +48,23 @@ class DailyWorker(context: Context, params: WorkerParameters) :
         WorkScheduler.schedule(applicationContext, hour, minute)
 
         return Result.success()
+    }
+
+    /**
+     * AT Protocol URI（at://did/.../rkey）を Bluesky Web URL に変換する。
+     * 例: at://did:plc:abc/app.bsky.feed.post/xyz → https://bsky.app/profile/did:plc:abc/post/xyz
+     * handle が分かっている場合は DID の代わりに handle を使う。
+     */
+    private fun atUriToWebUrl(atUri: String, handle: String?): String {
+        return try {
+            val parts = atUri.removePrefix("at://").split("/")
+            val did = parts[0]
+            val rkey = parts[2]
+            val identifier = handle ?: did
+            "https://bsky.app/profile/$identifier/post/$rkey"
+        } catch (_: Exception) {
+            "https://bsky.app"
+        }
     }
 
     /**

@@ -52,7 +52,11 @@ class OAuthManager(
      * bsky.social は最初のリクエストで use_dpop_nonce を返すため、
      * ノンスを取得後は再試行が必要になる。
      */
-    private var dpopNonce: String? = null
+    var dpopNonce: String? = null
+        private set
+
+    /** API 呼び出し側（BlueskyClient）がノンスを更新するために使用する。 */
+    fun updateDpopNonce(nonce: String) { dpopNonce = nonce }
 
     companion object {
         const val CLIENT_ID = "http://localhost"
