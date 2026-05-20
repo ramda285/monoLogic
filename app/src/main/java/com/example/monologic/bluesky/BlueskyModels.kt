@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 @Serializable data class Facet(val index: FacetIndex, val features: List<FacetFeature>)
 
 @Serializable data class PostRecord(
-    @SerialName("\$type") val type: String = "app.bsky.feed.post",
+    @SerialName("\$type") val type: String,   // 常に "app.bsky.feed.post" を明示
     val text: String,
     val createdAt: String,
     val facets: List<Facet>
@@ -25,7 +25,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable data class CreateRecordRequest(
     val repo: String,
-    val collection: String = "app.bsky.feed.post",
+    val collection: String,                   // 常に "app.bsky.feed.post" を明示
     val record: PostRecord
 )
 

@@ -15,7 +15,10 @@ class BlueskyClient(
     private val client: OkHttpClient,
     private val baseUrl: String = "https://bsky.social"
 ) {
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true   // $type / collection などデフォルト値フィールドを必ず出力
+    }
     private val mediaType = "application/json; charset=utf-8".toMediaType()
 
     companion object {
@@ -58,11 +61,14 @@ class BlueskyClient(
         jwt: String, did: String, text: String, facets: List<Facet>
     ): String? {
         val record = PostRecord(
+            type = "app.bsky.feed.post",
             text = text,
             createdAt = Instant.now().toString(),
             facets = facets
         )
-        val body = json.encodeToString(CreateRecordRequest(repo = did, record = record))
+        val body = json.encodeToString(
+            CreateRecordRequest(repo = did, collection = "app.bsky.feed.post", record = record)
+        )
             .toRequestBody(mediaType)
         return client.newCall(
             Request.Builder()
@@ -109,13 +115,16 @@ class BlueskyClient(
             val bodyJson = json.encodeToString(
                 CreateRecordRequest(
                     repo = did,
+                    collection = "app.bsky.feed.post",
                     record = PostRecord(
+                        type = "app.bsky.feed.post",
                         text = text,
                         createdAt = Instant.now().toString(),
                         facets = facets
                     )
                 )
             )
+            Log.d(TAG, "postWithOAuth request body: $bodyJson")
 
             fun attempt(attemptNum: Int): String? {
                 val proof = oauthManager.createDpopProof(
