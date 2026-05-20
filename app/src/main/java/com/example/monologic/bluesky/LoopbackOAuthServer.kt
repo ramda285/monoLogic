@@ -59,6 +59,7 @@ class LoopbackOAuthServer {
                     }
                     // "GET /callback?code=xxx&state=yyy HTTP/1.1" からパスを取り出す
                     val path = requestLine.split(" ").getOrElse(1) { "/callback" }
+                    // redirect_uri は "http://127.0.0.1:{port}" なので path は "/" または "/?code=..."
                     val callbackUri = Uri.parse("http://127.0.0.1:${server.localPort}$path")
 
                     // ブラウザに完了ページを返す
