@@ -93,53 +93,62 @@ class BlueskyClient(
         try {
             val (text, facets) = buildPostContent(word, weblioUrl)
             val recordUrl = "$baseUrl/xrpc/com.atproto.repo.createRecord"
-            val record = PostRecord(
-                text = text,
-                createdAt = Instant.now().toString(),
-                facets = facets
+            val bodyJson = json.encodeToString(
+                CreateRecordRequest(
+                    repo = did,
+                    record = PostRecord(
+                        text = text,
+                        createdAt = Instant.now().toString(),
+                        facets = facets
+                    )
+                )
             )
-            val bodyBytes = json.encodeToString(CreateRecordRequest(repo = did, record = record))
 
-            var result: String? = null
-            repeat(2) { attempt ->
-                if (result != null) return@repeat
-                val dpopProof = oauthManager.createDpopProof(
+            // 1回の HTTP 試行。成功時は URI、失敗時は null を返す。
+            // nonce が更新された場合は呼び出し元が再試行する。
+            fun attempt(attemptNum: Int): String? {
+                val proof = oauthManager.createDpopProof(
                     method = "POST",
                     url = recordUrl,
                     accessToken = accessToken
                 )
-                val (statusCode, bodyStr, newNonce) = client.newCall(
+                val response = client.newCall(
                     Request.Builder()
                         .url(recordUrl)
-                        .post(bodyBytes.toRequestBody(mediaType))
+                        .post(bodyJson.toRequestBody(mediaType))
                         .header("Authorization", "DPoP $accessToken")
-                        .header("DPoP", dpopProof)
+                        .header("DPoP", proof)
                         .build()
-                ).execute().use { r ->
-                    Triple(r.code, r.body?.string(), r.header("DPoP-Nonce"))
-                }
+                ).execute()
 
-                Log.d(TAG, "postWithOAuth attempt=$attempt status=$statusCode nonce=$newNonce body=$bodyStr")
+                val statusCode = response.code
+                val bodyStr = response.body?.string()
+                val newNonce = response.header("DPoP-Nonce")
+                response.close()
+
+                Log.d(TAG, "postWithOAuth #$attemptNum status=$statusCode nonce=$newNonce body=$bodyStr")
 
                 if (newNonce != null) oauthManager.updateDpopNonce(newNonce)
 
                 if (statusCode in 200..299 && bodyStr != null) {
-                    result = json.decodeFromString<CreateRecordResponse>(bodyStr).uri
-                    return@repeat
+                    return json.decodeFromString<CreateRecordResponse>(bodyStr).uri
                 }
 
                 val errorCode = bodyStr?.let {
                     runCatching { json.decodeFromString<OAuthErrorResponse>(it).error }.getOrNull()
                 }
-                // use_dpop_nonce かつノンスを受け取った場合のみリトライ
-                if (errorCode == "use_dpop_nonce" && newNonce != null && attempt == 0) {
-                    Log.d(TAG, "Retrying postWithOAuth with DPoP nonce: $newNonce")
-                    return@repeat
-                }
-                // それ以外は即終了
-                Log.e(TAG, "postWithOAuth failed: status=$statusCode body=$bodyStr")
+                Log.e(TAG, "postWithOAuth #$attemptNum failed: status=$statusCode error=$errorCode")
+                return null
             }
-            result
+
+            // 1回目
+            val first = attempt(1)
+            if (first != null) return@withContext first
+
+            // nonce が更新されていれば2回目を試みる
+            Log.d(TAG, "postWithOAuth retrying with updated nonce=${oauthManager.dpopNonce}")
+            attempt(2)
+
         } catch (e: Exception) {
             Log.e(TAG, "postWithOAuth exception", e)
             null

@@ -63,6 +63,7 @@ class LoopbackOAuthServer {
                     val callbackUri = Uri.parse("http://127.0.0.1:${server.localPort}$path")
 
                     // ブラウザに完了ページを返す
+                    // monologic://oauth/done にリダイレクトしてアプリを前面に戻す
                     val html = """
                         <!DOCTYPE html><html><head>
                         <meta charset="utf-8">
@@ -71,8 +72,8 @@ class LoopbackOAuthServer {
                         <style>body{font-family:sans-serif;text-align:center;padding:40px}</style>
                         </head><body>
                         <h2>✅ 認証完了</h2>
-                        <p>このタブを閉じてアプリに戻ってください。</p>
-                        <script>window.close();</script>
+                        <p>アプリに戻ります...</p>
+                        <script>window.location.href='monologic://oauth/done';</script>
                         </body></html>
                     """.trimIndent()
                     val response = buildString {

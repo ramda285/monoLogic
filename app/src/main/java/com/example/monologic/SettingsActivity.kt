@@ -147,6 +147,14 @@ class SettingsActivity : AppCompatActivity() {
         updateConnectionStatus(application as MonoLogicApp)
     }
 
+    /**
+     * monologic://oauth/done から戻ってきたとき（singleTop 再利用時）に呼ばれる。
+     * OAuth フローはすでに lifecycleScope で動いているので何もしない。
+     */
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         loopbackServer?.stop()

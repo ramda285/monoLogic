@@ -19,7 +19,18 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <!-- OAuth ループバック完了後にブラウザがアプリを前面に戻すためのスキーム -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="monologic" android:host="oauth" android:path="/done" />
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".worker.BootReceiver" android:exported="true">
             <intent-filter>
