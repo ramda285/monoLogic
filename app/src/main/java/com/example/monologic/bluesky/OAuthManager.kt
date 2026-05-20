@@ -61,8 +61,9 @@ class OAuthManager(
     companion object {
         const val CLIENT_ID = "http://localhost"
         const val REDIRECT_URI = "monologic://oauth/callback"
-        // atproto: 基本スコープ、repo:app.bsky.feed.post?action=create: 投稿書き込み権限
-        const val SCOPE = "atproto repo:app.bsky.feed.post?action=create"
+        // atproto スコープ = PDS への完全アクセス（createRecord を含む）
+        // http://localhost クライアントは repo:* スコープを宣言できないため atproto のみ使用
+        const val SCOPE = "atproto"
         const val AUTH_SERVER = "https://bsky.social"
         private const val TAG = "OAuthManager"
     }
