@@ -6,9 +6,11 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,6 +22,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.monologic.data.db.TopicEntity
 import com.example.monologic.worker.DailyWorker
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -28,44 +32,50 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         requestNotificationPermissionIfNeeded()
 
         val app = application as MonoLogicApp
 
-        // 次回投稿時刻を表示
         val (h, m) = app.settingsStore.loadTime()
-        findViewById<TextView>(R.id.txtNextSchedule).text =
-            "次回投稿：%02d:%02d".format(h, m)
+        findViewById<TextView>(R.id.txtNextSchedule).text = "%02d:%02d".format(h, m)
 
-        // お題履歴をDBのFlowから収集してRecyclerViewに表示
         val recycler = findViewById<RecyclerView>(R.id.recyclerHistory)
         recycler.layoutManager = LinearLayoutManager(this)
         val adapter = TopicAdapter()
         recycler.adapter = adapter
+
         lifecycleScope.launch {
             app.topicRepository.getAllFlow().collect { topics ->
                 adapter.submitList(topics)
             }
         }
 
-        // テスト用：DailyWorkerを即時起動
-        findViewById<Button>(R.id.btnRunNow).setOnClickListener {
+        findViewById<ExtendedFloatingActionButton>(R.id.btnRunNow).setOnClickListener {
             WorkManager.getInstance(this)
                 .enqueue(OneTimeWorkRequestBuilder<DailyWorker>().build())
         }
+    }
 
-        // 設定画面へ遷移
-        findViewById<Button>(R.id.btnSettings).setOnClickListener {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_settings) {
             startActivity(Intent(this, SettingsActivity::class.java))
+            return true
         }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
         super.onResume()
-        // 設定画面から戻ったときに表示時刻を更新
         val (h, m) = (application as MonoLogicApp).settingsStore.loadTime()
-        findViewById<TextView>(R.id.txtNextSchedule).text =
-            "次回投稿：%02d:%02d".format(h, m)
+        findViewById<TextView>(R.id.txtNextSchedule).text = "%02d:%02d".format(h, m)
     }
 
     private fun requestNotificationPermissionIfNeeded() {
@@ -89,17 +99,22 @@ class TopicAdapter : RecyclerView.Adapter<TopicAdapter.VH>() {
     }
 
     class VH(view: View) : RecyclerView.ViewHolder(view) {
-        val txt: TextView = view.findViewById(android.R.id.text1)
+        val txtDate: TextView = view.findViewById(R.id.txtDate)
+        val txtWord: TextView = view.findViewById(R.id.txtWord)
+        val imgPosted: ImageView = view.findViewById(R.id.imgPosted)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VH(
         LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.item_topic, parent, false)
     )
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
-        holder.txt.text = "${item.date}　${item.word}"
+        holder.txtDate.text = item.date
+        holder.txtWord.text = item.word
+        holder.imgPosted.visibility =
+            if (item.blueskyPostUri != null) View.VISIBLE else View.GONE
     }
 
     override fun getItemCount() = items.size

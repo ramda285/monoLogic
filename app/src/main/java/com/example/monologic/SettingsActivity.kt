@@ -32,6 +32,10 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
+
         tvConnectionStatus = findViewById(R.id.tvConnectionStatus)
         btnConnect = findViewById(R.id.btnConnect)
         btnDisconnect = findViewById(R.id.btnDisconnect)

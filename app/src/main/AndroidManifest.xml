@@ -10,7 +10,7 @@
         android:allowBackup="true"
         android:label="monoLogic"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        android:theme="@style/Theme.MonoLogic">
 
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>

@@ -1,69 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="match_parent">
 
-    <!-- Bluesky 接続セクション -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bluesky 連携"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/tvConnectionStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="未接続"
-        android:textSize="14sp"
-        android:layout_marginTop="8dp"/>
-
-    <Button
-        android:id="@+id/btnConnect"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bluesky でログイン"
-        android:layout_marginTop="12dp"/>
+        android:fitsSystemWindows="true">
 
-    <Button
-        android:id="@+id/btnDisconnect"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="設定"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationContentDescription="戻る"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="接続解除"
-        android:enabled="false"
-        android:layout_marginTop="4dp"/>
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <!-- 区切り線 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E0E0E0"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <!-- 投稿時刻セクション -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="投稿時刻"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+            <!-- Bluesky section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutline"
+                app:cardCornerRadius="16dp">
 
-    <Button
-        android:id="@+id/btnTimePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="08:00"
-        android:layout_marginTop="8dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="保存"
-        android:layout_marginTop="24dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bluesky 連携"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.04"
+                        android:textColor="?attr/colorPrimary"/>
 
-</LinearLayout>
+                    <TextView
+                        android:id="@+id/tvConnectionStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="未接続"
+                        android:textSize="15sp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnConnect"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bluesky でログイン"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDisconnect"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="接続解除"
+                        android:enabled="false"
+                        android:layout_marginTop="8dp"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Schedule section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutline"
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="投稿時刻"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.04"
+                        android:textColor="?attr/colorPrimary"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="毎日この時刻に自動で単語を取得して投稿します"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnTimePicker"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="08:00"
+                        android:textSize="28sp"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:fontFamily="sans-serif-medium"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="保存"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

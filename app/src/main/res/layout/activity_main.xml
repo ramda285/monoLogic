@@ -1,43 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/txtNextSchedule"
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="次回投稿：--:--"
-        android:textSize="16sp"/>
+        android:fitsSystemWindows="true">
 
-    <Button
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="monoLogic"
+            app:menu="@menu/menu_main"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Schedule card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="?attr/colorPrimaryContainer">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="次回の自動投稿"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.08"
+                    android:textAllCaps="false"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:alpha="0.75"/>
+
+                <TextView
+                    android:id="@+id/txtNextSchedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="sans-serif-medium"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- History section header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="投稿履歴"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:paddingBottom="10dp"/>
+
+        <!-- History list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerHistory"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"/>
+
+    </LinearLayout>
+
+    <!-- FAB: test run -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/btnRunNow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="今すぐ実行（テスト）"
-        android:layout_marginTop="16dp"/>
-
-    <Button
-        android:id="@+id/btnSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="設定"
-        android:layout_marginTop="8dp"/>
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="最近のお題"
-        android:textSize="14sp"
-        android:layout_marginTop="24dp"/>
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:text="今すぐ実行"
+        app:icon="@drawable/ic_play"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerHistory"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="8dp"/>
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
