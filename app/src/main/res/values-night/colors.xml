@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ダークモード -->
+    <color name="colorBackground">#111111</color>
+    <color name="colorSurface">#1C1C1C</color>
+    <color name="colorTopicWord">#EEEEEE</color>
+    <color name="colorTopicLabel">#444444</color>
+    <color name="colorGear">#888888</color>
+    <color name="colorDivider">#222222</color>
+    <color name="colorHandle">#333333</color>
+    <color name="colorHistoryWord">#AAAAAA</color>
+    <color name="colorHistoryDate">#444444</color>
+    <color name="colorSheetTitle">#555555</color>
+    <color name="colorSheetHintText">#444444</color>
+
+    <!-- 共通 -->
+    <color name="colorAccentAmber">#FFB800</color>
+</resources>

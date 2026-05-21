@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AnimatedVectorDrawable: l_group にスケール＋フェードを適用 -->
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_splash_icon">
+
+    <target
+        android:name="l_group"
+        android:animation="@animator/splash_enter" />
+
+</animated-vector>

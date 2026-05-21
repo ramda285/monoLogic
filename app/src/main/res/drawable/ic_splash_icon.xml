@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sunflower splash icon (240×240dp)
+  12 copies of Outfit-style "L" rotated 30° each, pivoting at center (120,120)
+  L coordinates scaled from 108dp → 240dp (×2.222):
+    vertical arm  : x 98→120 (w=22), y 44→142  (h=98)
+    horizontal arm: x 98→182 (w=84), y 120→142 (h=22)
+  Path: M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z
+  Wrapped in l_group for AnimatedVectorDrawable scale+fade animation.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+
+    <group
+        android:name="l_group"
+        android:pivotX="120"
+        android:pivotY="120"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:alpha="0">
+
+        <group android:pivotX="120" android:pivotY="120" android:rotation="0">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="30">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="60">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="90">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="120">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="150">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="180">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="210">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="240">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="270">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="300">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+        <group android:pivotX="120" android:pivotY="120" android:rotation="330">
+            <path android:fillColor="#FFB800"
+                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+        </group>
+
+    </group>
+</vector>

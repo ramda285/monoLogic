@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 「L」グループに適用するスケール＋フェードインアニメーション -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together">
+
+    <!-- スケール X: 0.7 → 1.0 (デセレートカービック) -->
+    <objectAnimator
+        android:propertyName="scaleX"
+        android:valueFrom="0.7"
+        android:valueTo="1.0"
+        android:duration="450"
+        android:interpolator="@android:interpolator/decelerate_cubic" />
+
+    <!-- スケール Y: 0.7 → 1.0 -->
+    <objectAnimator
+        android:propertyName="scaleY"
+        android:valueFrom="0.7"
+        android:valueTo="1.0"
+        android:duration="450"
+        android:interpolator="@android:interpolator/decelerate_cubic" />
+
+    <!-- フェードイン: 0 → 1 (最初の 250ms) -->
+    <objectAnimator
+        android:propertyName="alpha"
+        android:valueFrom="0.0"
+        android:valueTo="1.0"
+        android:duration="250"
+        android:interpolator="@android:interpolator/accelerate_decelerate" />
+
+</set>

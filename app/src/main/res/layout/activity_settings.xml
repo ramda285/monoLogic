@@ -1,69 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@color/colorBackground">
 
-    <!-- Bluesky 接続セクション -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bluesky 連携"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/tvConnectionStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="未接続"
-        android:textSize="14sp"
-        android:layout_marginTop="8dp"/>
-
-    <Button
-        android:id="@+id/btnConnect"
+    <!-- トップバー: 戻る矢印 + タイトル -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Bluesky でログイン"
-        android:layout_marginTop="12dp"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp">
 
-    <Button
-        android:id="@+id/btnDisconnect"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="接続解除"
-        android:enabled="false"
-        android:layout_marginTop="4dp"/>
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="@null"
+            android:contentDescription="戻る"
+            app:tint="@color/colorGear" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="設定"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorTopicWord" />
+
+    </LinearLayout>
 
     <!-- 区切り線 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E0E0E0"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"/>
+        android:background="@color/colorDivider" />
 
-    <!-- 投稿時刻セクション -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="投稿時刻"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
-
-    <Button
-        android:id="@+id/btnTimePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="08:00"
-        android:layout_marginTop="8dp"/>
-
-    <Button
-        android:id="@+id/btnSave"
+    <!-- スクロール可能なコンテンツ -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="保存"
-        android:layout_marginTop="24dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Bluesky 連携セクション -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bluesky 連携"
+                android:textSize="13sp"
+                android:letterSpacing="0.05"
+                android:textColor="@color/colorSheetTitle" />
+
+            <TextView
+                android:id="@+id/tvConnectionStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="未接続"
+                android:textSize="15sp"
+                android:textColor="@color/colorTopicWord"
+                android:layout_marginTop="10dp" />
+
+            <Button
+                android:id="@+id/btnConnect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bluesky でログイン"
+                android:layout_marginTop="12dp" />
+
+            <Button
+                android:id="@+id/btnDisconnect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="接続解除"
+                android:enabled="false"
+                android:layout_marginTop="4dp" />
+
+            <!-- 区切り線 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- 投稿時刻セクション -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="投稿時刻"
+                android:textSize="13sp"
+                android:letterSpacing="0.05"
+                android:textColor="@color/colorSheetTitle" />
+
+            <Button
+                android:id="@+id/btnTimePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="08:00"
+                android:layout_marginTop="10dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

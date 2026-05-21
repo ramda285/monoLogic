@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ライトモード -->
+    <color name="colorBackground">#F8F8F8</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorTopicWord">#111111</color>
+    <color name="colorTopicLabel">#CCCCCC</color>
+    <color name="colorGear">#555555</color>
+    <color name="colorDivider">#F0F0F0</color>
+    <color name="colorHandle">#CCCCCC</color>
+    <color name="colorHistoryWord">#333333</color>
+    <color name="colorHistoryDate">#BBBBBB</color>
+    <color name="colorSheetTitle">#999999</color>
+    <color name="colorSheetHintText">#BBBBBB</color>
+
+    <!-- 共通 -->
+    <color name="colorAccentAmber">#FFB800</color>
+    <!-- アイコン背景（常にダーク、ブランドカラー統一） -->
+    <color name="ic_launcher_background">#111111</color>
+</resources>

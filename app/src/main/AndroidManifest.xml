@@ -8,16 +8,28 @@
     <application
         android:name=".MonoLogicApp"
         android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="monoLogic"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity" android:exported="true">
+        <!-- ランチャー: スプラッシュアニメーションを再生してから MainActivity へ -->
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MonoLogic.SplashActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".SettingsActivity"

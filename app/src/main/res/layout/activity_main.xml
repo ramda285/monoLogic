@@ -1,43 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@color/colorBackground">
 
-    <TextView
-        android:id="@+id/txtNextSchedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="次回投稿：--:--"
-        android:textSize="16sp"/>
+    <!-- ─── メインコンテンツ ─── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="48dp">
 
-    <Button
-        android:id="@+id/btnRunNow"
+        <!-- トップバー: ロゴ + 設定ボタン -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="12dp">
+
+            <!-- "monoLogic" ロゴ（Lだけアンバー色はコードで設定） -->
+            <TextView
+                android:id="@+id/tvLogo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="monoLogic"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTopicWord" />
+
+            <!-- 設定ボタン（丸なし、アイコンのみ） -->
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_settings"
+                android:background="@null"
+                android:contentDescription="設定"
+                app:tint="@color/colorGear" />
+
+        </LinearLayout>
+
+        <!-- 今日のお題エリア（右寄せ縦書き） -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="12dp"
+            android:paddingEnd="56dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="top|end"
+                android:orientation="horizontal">
+
+                <!-- お題の単語（大・自動スケーリング） -->
+                <com.example.monologic.ui.VerticalTextView
+                    android:id="@+id/tvTopicWord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingTop="4dp" />
+
+                <!-- 「今日のお題」ラベル（小・固定サイズ） -->
+                <com.example.monologic.ui.VerticalTextView
+                    android:id="@+id/tvTopicLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:paddingTop="4dp" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- ─── ボトムシート: 最近のお題 ─── -->
+    <LinearLayout
+        android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="今すぐ実行（テスト）"
-        android:layout_marginTop="16dp"/>
+        android:orientation="vertical"
+        android:background="@color/colorSurface"
+        android:elevation="8dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="48dp"
+        app:behavior_hideable="false"
+        app:behavior_draggable="true">
 
-    <Button
-        android:id="@+id/btnSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="設定"
-        android:layout_marginTop="8dp"/>
+        <!-- ドラッグハンドル -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="最近のお題"
-        android:textSize="14sp"
-        android:layout_marginTop="24dp"/>
+            <View
+                android:layout_width="32dp"
+                android:layout_height="3dp"
+                android:layout_marginBottom="6dp"
+                android:background="@color/colorHandle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerHistory"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最近のお題"
+                android:textSize="10sp"
+                android:letterSpacing="0.1"
+                android:textColor="@color/colorSheetHintText" />
 
-</LinearLayout>
+        </LinearLayout>
+
+        <!-- 区切り線 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider" />
+
+        <!-- 履歴リスト -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="300dp"
+            android:nestedScrollingEnabled="false" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

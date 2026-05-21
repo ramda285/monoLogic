@@ -4,6 +4,7 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -151,13 +152,24 @@ class SettingsActivity : AppCompatActivity() {
             Toast.makeText(this, "Bluesky 接続を解除しました", Toast.LENGTH_SHORT).show()
         }
 
-        // ── 保存ボタン（投稿時刻のみ） ──────────────────────────────────
-        findViewById<Button>(R.id.btnSave).setOnClickListener {
-            app.settingsStore.saveTime(selectedHour, selectedMinute)
-            WorkScheduler.schedule(this, selectedHour, selectedMinute)
-            Toast.makeText(this, "保存しました", Toast.LENGTH_SHORT).show()
-            finish()
+        // ── 左上の戻るボタン: 保存して前の画面へ ──────────────────────
+        findViewById<View>(R.id.btnBack).setOnClickListener {
+            saveTimeAndFinish()
         }
+    }
+
+    /** 投稿時刻を保存して画面を閉じる */
+    private fun saveTimeAndFinish() {
+        val app = application as MonoLogicApp
+        app.settingsStore.saveTime(selectedHour, selectedMinute)
+        WorkScheduler.schedule(this, selectedHour, selectedMinute)
+        finish()
+    }
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun onBackPressed() {
+        saveTimeAndFinish()
+        // finish() 済みなので super は呼ばない
     }
 
     /**

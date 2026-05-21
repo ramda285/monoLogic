@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Google Fonts Provider 証明書 (com.google.android.gms.fonts)
+  ※ 正確な証明書は Android Studio の "Add font from Google Fonts" ウィザードで自動生成されます。
+    以下の値は構造プレースホルダーです。正しい証明書がないと Google Fonts 経由の
+    ダウンロードは失敗しますが、assets/fonts/Outfit-Bold.ttf がある場合は
+    そちらに自動フォールバックします。
+-->
+<resources>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+
+    <!-- placeholder — Android Studio で上書きしてください -->
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>PLACEHOLDER</item>
+    </string-array>
+</resources>

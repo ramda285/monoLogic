@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>monoLogic — ロゴフォント候補</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&family=Outfit:wght@700&family=DM+Sans:wght@700&family=Inter:wght@700&family=Jost:wght@700&family=Raleway:wght@700&family=Exo+2:wght@700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1A1A1A;
+    font-family: -apple-system, sans-serif;
+    padding: 32px 20px 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+  }
+  h2 { color: #EEE; font-size: 18px; text-align: center; }
+  p  { color: #666; font-size: 13px; text-align: center; margin-top: 4px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px; width: 100%; max-width: 900px;
+  }
+
+  .card {
+    border: 2px solid #2A2A2A; border-radius: 14px; overflow: hidden;
+    cursor: pointer; transition: border-color .2s, transform .15s;
+  }
+  .card:hover { border-color: #FFB800; transform: translateY(-2px); }
+  .card.selected { border-color: #FFB800; background: #1A1400; }
+
+  /* mini phone: dark + light side by side */
+  .previews {
+    display: flex;
+  }
+  .preview {
+    flex: 1; padding: 12px 14px 10px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .preview.light { background: #F8F8F8; }
+  .preview.dark  { background: #111111; border-right: 1px solid #2A2A2A; }
+
+  .logo-text { font-size: 20px; font-weight: 700; }
+  .logo-text .L { color: #FFB800; }
+  .preview.light .logo-text span:not(.L) { color: #111; }
+  .preview.dark  .logo-text span:not(.L) { color: #EEE; }
+
+  .card-info { padding: 10px 14px 12px; background: #111; }
+  .font-name { font-size: 13px; font-weight: 600; color: #DDD; }
+  .font-desc { font-size: 11px; color: #555; margin-top: 3px; line-height: 1.5; }
+
+  /* font classes */
+  .f-roboto    { font-family: -apple-system, 'Roboto', sans-serif; }
+  .f-spacemono { font-family: 'Space Mono', monospace; }
+  .f-outfit    { font-family: 'Outfit', sans-serif; }
+  .f-dmsans    { font-family: 'DM Sans', sans-serif; }
+  .f-inter     { font-family: 'Inter', sans-serif; }
+  .f-jost      { font-family: 'Jost', sans-serif; }
+  .f-raleway   { font-family: 'Raleway', sans-serif; }
+  .f-exo2      { font-family: 'Exo 2', sans-serif; }
+  .f-orbitron  { font-family: 'Orbitron', sans-serif; font-size: 15px !important; }
+</style>
+</head>
+<body>
+
+<h2>ロゴフォント候補</h2>
+<p>クリックで選択。左がダーク、右がライトのプレビュー。</p>
+
+<div class="grid">
+
+  <!-- Roboto (現在) -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-roboto"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-roboto"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Roboto（現在）</div>
+      <div class="font-desc">Android 標準。癖がなく読みやすい。</div>
+    </div>
+  </div>
+
+  <!-- Inter -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-inter"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-inter"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Inter</div>
+      <div class="font-desc">Roboto より少し幅広でシャープ。UI 向けに設計された現代的フォント。</div>
+    </div>
+  </div>
+
+  <!-- Jost -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-jost"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-jost"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Jost</div>
+      <div class="font-desc">ジオメトリック・エレガント。「o」が真円で洗練された印象。</div>
+    </div>
+  </div>
+
+  <!-- Outfit -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-outfit"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-outfit"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Outfit</div>
+      <div class="font-desc">丸みと直線のバランスが絶妙。モダンで親しみやすい。</div>
+    </div>
+  </div>
+
+  <!-- DM Sans -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-dmsans"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-dmsans"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">DM Sans</div>
+      <div class="font-desc">スッキリしたクリーンな印象。小サイズでも潰れにくい。</div>
+    </div>
+  </div>
+
+  <!-- Raleway -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-raleway"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-raleway"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Raleway</div>
+      <div class="font-desc">細くエレガント。ハイエンドブランドっぽい雰囲気。</div>
+    </div>
+  </div>
+
+  <!-- Space Mono -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-spacemono"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-spacemono"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Space Mono</div>
+      <div class="font-desc">等幅フォント。「mono」の名前とぴったり合ったテック感。</div>
+    </div>
+  </div>
+
+  <!-- Exo 2 -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-exo2"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-exo2"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Exo 2</div>
+      <div class="font-desc">未来的でシャープ。斜めのカットが特徴的。</div>
+    </div>
+  </div>
+
+  <!-- Orbitron -->
+  <div class="card" onclick="toggle(this)">
+    <div class="previews">
+      <div class="preview dark"><div class="logo-text f-orbitron"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+      <div class="preview light"><div class="logo-text f-orbitron"><span>mono</span><span class="L">L</span><span>ogic</span></div></div>
+    </div>
+    <div class="card-info">
+      <div class="font-name">Orbitron</div>
+      <div class="font-desc">SF・テック感が強い角ばったフォント。個性派。</div>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:8px;">気に入ったものをクリックして名前を教えてください</p>
+
+<script>
+function toggle(card) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+}
+</script>
+</body>
+</html>

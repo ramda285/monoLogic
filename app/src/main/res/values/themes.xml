@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- SplashActivity 専用テーマ: 常にダーク背景、タイトルバーなし -->
+    <style name="Theme.MonoLogic.SplashActivity" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">#111111</item>
+        <item name="android:statusBarColor">#111111</item>
+        <item name="android:navigationBarColor">#111111</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+    <!-- アプリ本体テーマ (ダーク/ライト自動切替) -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorAccentAmber</item>
+        <item name="colorPrimaryVariant">@color/colorAccentAmber</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:statusBarColor">@color/colorBackground</item>
+        <item name="android:navigationBarColor">@color/colorBackground</item>
+    </style>
+
+</resources>
