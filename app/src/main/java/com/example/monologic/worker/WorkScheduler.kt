@@ -1,7 +1,9 @@
 package com.example.monologic.worker
 
 import android.content.Context
+import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import java.util.Calendar
@@ -12,8 +14,12 @@ object WorkScheduler {
 
     fun schedule(context: Context, hour: Int, minute: Int) {
         val delay = computeDelayMillis(hour, minute)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
         val request = OneTimeWorkRequestBuilder<DailyWorker>()
             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .setConstraints(constraints)
             .addTag(WORK_NAME)
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
