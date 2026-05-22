@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Sunflower icon: 12 copies of Outfit-style "L" shape
+  Sunflower icon: 12 copies of Outfit Bold-style "L" shape
   each rotated 30° more than the previous, pivoting at center (54,54)
-  L inner corner sits at center; vertical arm rises up, horizontal arm extends right
-  Path: M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z
-    vertical arm  : x 44→54 (w=10), y 20→64  (h=44, extends 34 above center)
-    horizontal arm: x 44→82 (w=38), y 54→64  (h=10, extends 28 right of center)
+
+  L の視覚的中心 = (54,54) に合わせたパス（フォントテキスト描画との整合性）
+    cap height H = 36, stroke width S = 7 (≈20% of H, Outfit Bold 近似)
+    arm length   = 20 (≈56% of H, Outfit Bold 近似)
+
+  中心(54,54) から:
+    垂直バー: left = 54 - S/2 = 50.5 ≈ 50, right = 54 + S/2 = 57.5 ≈ 58
+              top  = 54 - H/2 = 36,  bottom = 54 + H/2 = 72
+    水平バー: left = 50, right = 50 + arm = 70
+              top  = 72 - S = 65,    bottom = 72
+
+  Path: M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -15,51 +23,56 @@
 
     <group android:pivotX="54" android:pivotY="54" android:rotation="0">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="30">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="60">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="90">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="120">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="150">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="180">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="210">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="240">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="270">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="300">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
     <group android:pivotX="54" android:pivotY="54" android:rotation="330">
         <path android:fillColor="#FFB800"
-            android:pathData="M46,27 L54,27 L54,54 L76,54 L76,62 L46,62 Z"/>
+            android:pathData="M50,36 L58,36 L58,65 L70,65 L70,72 L50,72 Z"/>
     </group>
+
+    <!-- 中心の穴（背景色で塗りつぶして穴に見せる） r=4 -->
+    <path
+        android:fillColor="#111111"
+        android:pathData="M50,54 A4,4,0,1,0,58,54 A4,4,0,1,0,50,54 Z"/>
 
 </vector>

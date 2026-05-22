@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Sunflower splash icon (240×240dp)
-  12 copies of Outfit-style "L" rotated 30° each, pivoting at center (120,120)
-  L coordinates scaled from 108dp → 240dp (×2.222):
-    vertical arm  : x 98→120 (w=22), y 44→142  (h=98)
-    horizontal arm: x 98→182 (w=84), y 120→142 (h=22)
-  Path: M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z
+  12 copies of Outfit Bold-style "L" rotated 30° each, pivoting at center (120,120)
+
+  L の視覚的中心 = (120,120)（フォントテキスト描画との整合性）
+  108dp パスをそのまま 240dp 空間の中心(120,120) に移植:
+    元パス (center=54,54): M50,36 L58,36 L58,65 L70,65 L70,72 L50,72
+    オフセット = 120 - 54 = +66
+    新パス: M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z
+
   Wrapped in l_group for AnimatedVectorDrawable scale+fade animation.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -24,51 +27,51 @@
 
         <group android:pivotX="120" android:pivotY="120" android:rotation="0">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="30">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="60">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="90">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="120">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="150">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="180">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="210">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="240">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="270">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="300">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
         <group android:pivotX="120" android:pivotY="120" android:rotation="330">
             <path android:fillColor="#FFB800"
-                android:pathData="M102,59 L120,59 L120,120 L170,120 L170,138 L102,138 Z"/>
+                android:pathData="M116,102 L124,102 L124,131 L136,131 L136,138 L116,138 Z"/>
         </group>
 
     </group>

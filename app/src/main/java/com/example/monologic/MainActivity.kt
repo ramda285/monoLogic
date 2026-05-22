@@ -13,6 +13,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -117,6 +118,12 @@ class MainActivity : AppCompatActivity() {
         // お題単語の色
         wordView.textColor = ContextCompat.getColor(this, R.color.colorTopicWord)
 
+        // 初回表示用フローインアニメーションの初期状態
+        wordView.alpha = 0f
+        wordView.translationY = -(resources.displayMetrics.density * 120f)
+
+        var topicAnimPlayed = false
+
         lifecycleScope.launch {
             (application as MonoLogicApp).topicRepository.getAllFlow().collect { topics ->
                 if (topics.isNotEmpty()) {
@@ -124,9 +131,35 @@ class MainActivity : AppCompatActivity() {
                     wordView.text = topics.first().word
                     // 残りを履歴へ（先頭 = 今日分 を除く）
                     adapter.submitList(topics.drop(1))
+
+                    // 初回のみ上からフローイン
+                    if (!topicAnimPlayed) {
+                        topicAnimPlayed = true
+                        wordView.postDelayed({
+                            wordView.animate()
+                                .translationY(0f)
+                                .alpha(1f)
+                                .setDuration(600)
+                                .setStartDelay(0)
+                                .setInterpolator(DecelerateInterpolator(2f))
+                                .start()
+                        }, 150L)
+                    }
                 } else {
                     wordView.text = "ー"
                     adapter.submitList(emptyList())
+                    // データなしの場合もフェードイン
+                    if (!topicAnimPlayed) {
+                        topicAnimPlayed = true
+                        wordView.postDelayed({
+                            wordView.animate()
+                                .translationY(0f)
+                                .alpha(1f)
+                                .setDuration(400)
+                                .setInterpolator(DecelerateInterpolator())
+                                .start()
+                        }, 150L)
+                    }
                 }
             }
         }
