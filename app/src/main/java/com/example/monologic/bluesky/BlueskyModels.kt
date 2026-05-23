@@ -79,3 +79,31 @@ data class OAuthTokens(
     val refreshToken: String,
     val did: String
 )
+
+// ── getPostThread（リプライ取得）用モデル ────────────────────────────────────
+
+@Serializable data class AuthorProfile(
+    val handle: String,
+    val displayName: String? = null
+)
+
+@Serializable data class PostValue(val text: String)
+
+@Serializable data class PostView(
+    val uri: String,
+    val author: AuthorProfile,
+    val record: PostValue
+)
+
+@Serializable data class ThreadViewPost(
+    @SerialName("\$type") val type: String = "",
+    val post: PostView,
+    val replies: List<ThreadNode> = emptyList()
+)
+
+@Serializable data class ThreadNode(
+    @SerialName("\$type") val type: String = "",
+    val post: PostView? = null
+)
+
+@Serializable data class GetPostThreadResponse(val thread: ThreadViewPost)

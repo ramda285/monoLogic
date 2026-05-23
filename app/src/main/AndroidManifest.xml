@@ -44,6 +44,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".MindmapActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
         <receiver android:name=".worker.BootReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

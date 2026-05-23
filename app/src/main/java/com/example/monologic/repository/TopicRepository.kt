@@ -11,6 +11,8 @@ class TopicRepository(private val dao: TopicDao) {
 
     suspend fun getTodayTopic(date: String): TopicEntity? = dao.getByDate(date)
 
+    suspend fun getByDate(date: String): TopicEntity? = dao.getByDate(date)
+
     /** 日付降順で全お題をLiveなFlowとして返す */
     fun getAllFlow(): Flow<List<TopicEntity>> = dao.getAll()
 
@@ -19,4 +21,13 @@ class TopicRepository(private val dao: TopicDao) {
 
     // Phase 3以降: AI分析（スタブ）
     suspend fun getUnanalyzed(): List<TopicEntity> = dao.getUnanalyzed()
+
+    // Phase 2: リプライ監視
+    suspend fun getPendingReplies(): List<TopicEntity> = dao.getPendingReplies()
+
+    suspend fun updateReplyStatus(date: String, status: String) =
+        dao.updateReplyStatus(date, status)
+
+    suspend fun updateReplyAndAnalysis(date: String, status: String, keywordsJson: String) =
+        dao.updateReplyAndAnalysis(date, status, keywordsJson)
 }

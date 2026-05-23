@@ -21,4 +21,15 @@
         android:textSize="11sp"
         android:textColor="@color/colorHistoryDate" />
 
+    <!-- リプライステータスドット（丸 or ✕） -->
+    <TextView
+        android:id="@+id/tvHistoryDot"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_dot_neutral"
+        android:text=""
+        android:visibility="invisible"/>
+
 </LinearLayout>

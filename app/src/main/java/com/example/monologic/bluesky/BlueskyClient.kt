@@ -199,6 +199,37 @@ class BlueskyClient(
         Regex("""nonce="([^"]+)"""").find(wwwAuthenticate)?.groupValues?.getOrNull(1)
 
     /**
+     * 指定 AT-URI のスレッドを取得し、直接リプライの (authorHandle, text) ペアを返す。
+     * Bearer トークンは App Password 認証で取得したものを渡す。
+     * OAuth 認証の場合は accessToken を渡すこと。
+     *
+     * @param atUri 投稿の AT-URI (at://did.../app.bsky.feed.post/rkey)
+     * @param accessToken Bearer トークン
+     */
+    suspend fun fetchReplies(atUri: String, accessToken: String): List<Pair<String, String>> {
+        val encodedUri = android.net.Uri.encode(atUri)
+        val url = "$baseUrl/xrpc/app.bsky.feed.getPostThread?uri=$encodedUri&depth=1"
+        val request = Request.Builder()
+            .url(url)
+            .header("Authorization", "Bearer $accessToken")
+            .build()
+        return withContext(Dispatchers.IO) {
+            try {
+                val resp = client.newCall(request).execute()
+                if (!resp.isSuccessful) return@withContext emptyList()
+                val body = resp.body?.string() ?: return@withContext emptyList()
+                val thread = json.decodeFromString<GetPostThreadResponse>(body)
+                thread.thread.replies.mapNotNull { node ->
+                    val post = node.post ?: return@mapNotNull null
+                    Pair(post.author.handle, post.record.text)
+                }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+    }
+
+    /**
      * 投稿テキストと facets（リンク・ハッシュタグ情報）を生成する。
      *
      * テキスト形式:

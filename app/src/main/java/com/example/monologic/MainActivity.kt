@@ -21,11 +21,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.monologic.analysis.GeminiTopicAnalyzer
+import com.example.monologic.analysis.KeywordEntry
+import com.example.monologic.analysis.Sentiment
+import com.example.monologic.data.db.ReplyStatus
 import com.example.monologic.data.db.TopicEntity
 import com.example.monologic.ui.VerticalTextView
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 class MainActivity : AppCompatActivity() {
 
@@ -129,6 +134,8 @@ class MainActivity : AppCompatActivity() {
                 if (topics.isNotEmpty()) {
                     // 最新のお題をメイン表示
                     wordView.text = topics.first().word
+                    // キーワードチップ更新
+                    updateKeywordChips(parseKeywords(topics.first().keywords))
                     // 残りを履歴へ（先頭 = 今日分 を除く）
                     adapter.submitList(topics.drop(1))
 
@@ -147,6 +154,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else {
                     wordView.text = "ー"
+                    updateKeywordChips(null)
                     adapter.submitList(emptyList())
                     // データなしの場合もフェードイン
                     if (!topicAnimPlayed) {
@@ -162,6 +170,51 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    // ────────────────────────────────────────────────────
+    // キーワードチップ表示
+    // ────────────────────────────────────────────────────
+    private fun updateKeywordChips(keywords: List<KeywordEntry>?) {
+        val layout = findViewById<View>(R.id.layoutKeywords)
+        val chips  = listOf(
+            findViewById<TextView>(R.id.tvChip1),
+            findViewById<TextView>(R.id.tvChip2),
+            findViewById<TextView>(R.id.tvChip3)
+        )
+        if (keywords.isNullOrEmpty()) {
+            layout.visibility = View.GONE
+            return
+        }
+        layout.visibility = View.VISIBLE
+        keywords.forEachIndexed { i, kw ->
+            val chip = chips.getOrNull(i) ?: return@forEachIndexed
+            chip.visibility = View.VISIBLE
+            chip.text = kw.word
+            val (bgRes, textColorRes) = when (kw.sentiment) {
+                Sentiment.POSITIVE -> R.drawable.bg_chip_positive to R.color.colorChipPositiveText
+                Sentiment.NEGATIVE -> R.drawable.bg_chip_negative to R.color.colorChipNegativeText
+                else               -> R.drawable.bg_chip_neutral  to R.color.colorChipNeutralText
+            }
+            chip.setBackgroundResource(bgRes)
+            chip.setTextColor(ContextCompat.getColor(this, textColorRes))
+            chip.setOnClickListener {
+                startActivity(
+                    Intent(this, MindmapActivity::class.java)
+                        .putExtra(MindmapActivity.EXTRA_WORD, kw.word)
+                )
+            }
+        }
+        for (i in keywords.size until chips.size) chips[i].visibility = View.GONE
+    }
+
+    private fun parseKeywords(json: String?): List<KeywordEntry>? {
+        json ?: return null
+        return try {
+            Json.decodeFromString<List<KeywordEntry>>(json)
+        } catch (e: Exception) {
+            null
         }
     }
 
@@ -195,6 +248,7 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.VH>() {
     class VH(view: View) : RecyclerView.ViewHolder(view) {
         val tvWord: TextView = view.findViewById(R.id.tvHistoryWord)
         val tvDate: TextView = view.findViewById(R.id.tvHistoryDate)
+        val tvDot:  TextView = view.findViewById(R.id.tvHistoryDot)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -207,6 +261,34 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.VH>() {
         val item = items[position]
         holder.tvWord.text = item.word
         holder.tvDate.text = item.date
+
+        // リプライステータスドット
+        when (item.replyStatus) {
+            ReplyStatus.REPLIED -> {
+                val keywords = item.keywords?.let {
+                    try { Json.decodeFromString<List<KeywordEntry>>(it) }
+                    catch (e: Exception) { null }
+                }
+                val majority = keywords?.let { GeminiTopicAnalyzer("").majoritySentiment(it) }
+                             ?: Sentiment.NEUTRAL
+                val dotRes = when (majority) {
+                    Sentiment.POSITIVE -> R.drawable.bg_dot_positive
+                    Sentiment.NEGATIVE -> R.drawable.bg_dot_negative
+                    else               -> R.drawable.bg_dot_neutral
+                }
+                holder.tvDot.setBackgroundResource(dotRes)
+                holder.tvDot.text = ""
+                holder.tvDot.visibility = View.VISIBLE
+            }
+            ReplyStatus.TIMEOUT -> {
+                holder.tvDot.setBackgroundResource(0)
+                holder.tvDot.text = "✕"
+                holder.tvDot.setTextColor(0xFF888888.toInt())
+                holder.tvDot.textSize = 9f
+                holder.tvDot.visibility = View.VISIBLE
+            }
+            else -> holder.tvDot.visibility = View.INVISIBLE
+        }
     }
 
     override fun getItemCount() = items.size

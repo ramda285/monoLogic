@@ -13,6 +13,11 @@
     <color name="colorSheetTitle">#999999</color>
     <color name="colorSheetHintText">#BBBBBB</color>
 
+    <!-- キーワードチップ テキストカラー -->
+    <color name="colorChipPositiveText">#111111</color>  <!-- アンバー地 → 暗いテキスト -->
+    <color name="colorChipNegativeText">#F8F8F8</color>  <!-- 黒地 → 明るいテキスト -->
+    <color name="colorChipNeutralText">#333333</color>   <!-- グレー地 → 暗いテキスト -->
+
     <!-- 共通 -->
     <color name="colorAccentAmber">#FFB800</color>
     <!-- アイコン背景（常にダーク、ブランドカラー統一） -->

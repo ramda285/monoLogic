@@ -112,6 +112,48 @@
                 android:text="08:00"
                 android:layout_marginTop="10dp" />
 
+            <!-- 区切り線 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Gemini API セクション -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gemini API"
+                android:textSize="13sp"
+                android:letterSpacing="0.05"
+                android:textColor="@color/colorSheetTitle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="リプライからトピックを抽出するために使用します"
+                android:textSize="12sp"
+                android:textColor="@color/colorTopicLabel"
+                android:layout_marginTop="4dp" />
+
+            <EditText
+                android:id="@+id/etGeminiApiKey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="AIza..."
+                android:inputType="textPassword"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/colorTopicWord"
+                android:textColorHint="@color/colorTopicLabel" />
+
+            <Button
+                android:id="@+id/btnSaveGeminiKey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="APIキーを保存"
+                android:layout_marginTop="8dp" />
+
         </LinearLayout>
     </ScrollView>
 

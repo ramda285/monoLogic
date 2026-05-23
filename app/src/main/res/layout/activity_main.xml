@@ -77,6 +77,48 @@
                     android:paddingTop="4dp" />
 
             </LinearLayout>
+
+            <!-- キーワードチップ行（リプライ解析後に表示） -->
+            <LinearLayout
+                android:id="@+id/layoutKeywords"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                android:paddingStart="8dp"
+                android:paddingBottom="8dp">
+
+                <com.example.monologic.ui.ArrowView
+                    android:layout_width="32dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="4dp"/>
+
+                <TextView
+                    android:id="@+id/tvChip1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:textSize="12sp"
+                    android:background="@drawable/bg_chip_neutral"/>
+
+                <TextView
+                    android:id="@+id/tvChip2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:textSize="12sp"
+                    android:background="@drawable/bg_chip_neutral"/>
+
+                <TextView
+                    android:id="@+id/tvChip3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:background="@drawable/bg_chip_neutral"/>
+
+            </LinearLayout>
         </FrameLayout>
 
     </LinearLayout>

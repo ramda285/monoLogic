@@ -14,7 +14,8 @@ data class TopicEntity(
     val blueskyPostUri: String?,  // 投稿失敗時はnull
     val postedAt: Long,           // Unixミリ秒
 
-    // Phase 2（リプライ収集用・予約）
+    // Phase 2（リプライ監視）
+    val replyStatus: String? = null,  // ReplyStatus.PENDING / REPLIED / TIMEOUT
     val replyText: String? = null,
     val replyUri: String? = null,
     val collectedAt: Long? = null,

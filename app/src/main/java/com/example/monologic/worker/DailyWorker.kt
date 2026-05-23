@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.monologic.MonoLogicApp
+import com.example.monologic.data.db.ReplyStatus
 import com.example.monologic.data.db.TopicEntity
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -45,9 +46,17 @@ class DailyWorker(context: Context, params: WorkerParameters) :
                 word = weblioResult.word,
                 weblioUrl = weblioResult.url,
                 blueskyPostUri = postUri,
-                postedAt = System.currentTimeMillis()
+                postedAt = System.currentTimeMillis(),
+                // 投稿成功時はリプライ監視を開始
+                replyStatus = if (postUri != null) ReplyStatus.PENDING else null
             )
         )
+
+        // 投稿成功時はリプライチェックワーカーをスケジュール
+        if (postUri != null) {
+            WorkScheduler.scheduleReplyCheck1h(applicationContext, today)
+            WorkScheduler.scheduleReplyCheck3h(applicationContext, today)
+        }
 
         // 5. 翌日分のワーカーを再スケジュール
         val (hour, minute) = app.settingsStore.loadTime()

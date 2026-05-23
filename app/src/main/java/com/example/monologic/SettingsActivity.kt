@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -150,6 +151,15 @@ class SettingsActivity : AppCompatActivity() {
             app.credentialStore.clearOAuthTokens()
             updateConnectionStatus(app)
             Toast.makeText(this, "Bluesky 接続を解除しました", Toast.LENGTH_SHORT).show()
+        }
+
+        // ── Gemini API キー ─────────────────────────────────────────────
+        val etGeminiKey = findViewById<EditText>(R.id.etGeminiApiKey)
+        etGeminiKey.setText(app.credentialStore.getGeminiApiKey())
+        findViewById<Button>(R.id.btnSaveGeminiKey).setOnClickListener {
+            val key = etGeminiKey.text.toString().trim()
+            app.credentialStore.saveGeminiApiKey(key)
+            Toast.makeText(this, "Gemini APIキーを保存しました", Toast.LENGTH_SHORT).show()
         }
 
         // ── 左上の戻るボタン: 保存して前の画面へ ──────────────────────

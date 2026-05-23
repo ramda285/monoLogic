@@ -21,4 +21,14 @@ interface TopicDao {
     // Phase 3以降で使用
     @Query("SELECT * FROM topics WHERE replyText IS NOT NULL AND sentiment IS NULL")
     suspend fun getUnanalyzed(): List<TopicEntity>
+
+    // Phase 2: リプライ監視用
+    @Query("SELECT * FROM topics WHERE replyStatus = 'PENDING'")
+    suspend fun getPendingReplies(): List<TopicEntity>
+
+    @Query("UPDATE topics SET replyStatus = :status WHERE date = :date")
+    suspend fun updateReplyStatus(date: String, status: String)
+
+    @Query("UPDATE topics SET replyStatus = :status, keywords = :keywordsJson WHERE date = :date")
+    suspend fun updateReplyAndAnalysis(date: String, status: String, keywordsJson: String)
 }

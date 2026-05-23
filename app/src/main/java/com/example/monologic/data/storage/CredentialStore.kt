@@ -119,6 +119,11 @@ class CredentialStore(context: Context) {
         return kp
     }
 
+    // ─── Gemini API キー ─────────────────────────────────────────────────
+
+    fun saveGeminiApiKey(key: String) = prefs.edit().putString(KEY_GEMINI_API_KEY, key).apply()
+    fun getGeminiApiKey(): String = prefs.getString(KEY_GEMINI_API_KEY, "") ?: ""
+
     fun clear() = prefs.edit().clear().apply()
 
     companion object {
@@ -131,5 +136,6 @@ class CredentialStore(context: Context) {
         private const val KEY_OAUTH_PDS = "oauth_pds_url"
         private const val KEY_DPOP_PRIV = "dpop_private_key"
         private const val KEY_DPOP_PUB = "dpop_public_key"
+        private const val KEY_GEMINI_API_KEY = "gemini_api_key"
     }
 }
