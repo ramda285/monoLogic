@@ -12,9 +12,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.monologic.analysis.GeminiTopicAnalyzer
 import com.example.monologic.bluesky.LoopbackOAuthServer
+import com.example.monologic.data.db.ReplyStatus
 import com.example.monologic.worker.WorkScheduler
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var tvConnectionStatus: TextView
@@ -160,6 +168,98 @@ class SettingsActivity : AppCompatActivity() {
             val key = etGeminiKey.text.toString().trim()
             app.credentialStore.saveGeminiApiKey(key)
             Toast.makeText(this, "Gemini APIキーを保存しました", Toast.LENGTH_SHORT).show()
+        }
+
+        // ── デバッグ ────────────────────────────────────────────────────
+        val tvDebugLog = findViewById<TextView>(R.id.tvDebugLog)
+
+        // テスト投稿ボタン: DailyWorker を即時実行
+        findViewById<Button>(R.id.btnDebugPost).setOnClickListener {
+            tvDebugLog.text = "投稿ワーカーを起動中..."
+            val request = OneTimeWorkRequestBuilder<com.example.monologic.worker.DailyWorker>()
+                .build()
+            WorkManager.getInstance(this).enqueueUniqueWork(
+                "debug_daily_post",
+                ExistingWorkPolicy.REPLACE,
+                request
+            )
+            tvDebugLog.text = "✓ DailyWorker をエンキューしました\nWorkManager のバックグラウンドで実行されます。\n投稿成功後、通知が届きます。"
+        }
+
+        // リプライ解析テストボタン: 最新トピックのリプライを取得して Gemini で解析
+        findViewById<Button>(R.id.btnDebugReplyAnalysis).setOnClickListener {
+            tvDebugLog.text = "リプライを取得中..."
+            val btn = it as Button
+            btn.isEnabled = false
+
+            lifecycleScope.launch {
+                try {
+                    // 最新のトピックを取得（AT-URI を持つ最初のもの）
+                    val topics = app.topicRepository.getAllFlow().first()
+                    val topic  = topics.firstOrNull { it.blueskyPostUri != null }
+                    if (topic == null) {
+                        tvDebugLog.text = "❌ AT-URI を持つトピックが DB にありません\n先にテスト投稿を実行してください。"
+                        return@launch
+                    }
+
+                    tvDebugLog.text = "対象: ${topic.word} (${topic.date})\n" +
+                        "AT-URI: ${topic.blueskyPostUri}\nリプライ取得中..."
+
+                    val accessToken = app.credentialStore.loadOAuthTokens()?.accessToken
+                    if (accessToken == null) {
+                        tvDebugLog.text = "❌ OAuth トークンがありません\nBluesky にログインしてください。"
+                        return@launch
+                    }
+
+                    val replies = app.blueskyClient.fetchReplies(topic.blueskyPostUri!!, accessToken)
+                    if (replies.isEmpty()) {
+                        tvDebugLog.text = "「${topic.word}」のリプライは 0 件でした。\n" +
+                            "実際にリプライが届いてから試してください。"
+                        return@launch
+                    }
+
+                    tvDebugLog.text = "リプライ ${replies.size} 件を取得:\n" +
+                        replies.joinToString("\n") { (h, t) -> "@$h: $t" } +
+                        "\n\nGemini で解析中..."
+
+                    val apiKey = app.credentialStore.getGeminiApiKey()
+                    if (apiKey.isBlank()) {
+                        tvDebugLog.text = tvDebugLog.text.toString() +
+                            "\n❌ Gemini API キーが未設定です。"
+                        return@launch
+                    }
+
+                    val analyzer = GeminiTopicAnalyzer(apiKey)
+                    val keywords = analyzer.analyze(replies, topic.word)
+
+                    if (keywords.isEmpty()) {
+                        tvDebugLog.text = tvDebugLog.text.toString() +
+                            "\n❌ Gemini の応答が空でした（APIキーや通信を確認してください）。"
+                        return@launch
+                    }
+
+                    val resultText = keywords.joinToString("\n") { kw ->
+                        val mark = when (kw.sentiment) {
+                            "POSITIVE" -> "[+]" ; "NEGATIVE" -> "[-]" ; else -> "[=]"
+                        }
+                        "$mark ${kw.word}"
+                    }
+                    tvDebugLog.text = "✓ 解析完了（${topic.word}）:\n$resultText"
+
+                    // DB に保存してメイン画面にも反映
+                    val jsonStr = Json.encodeToString(keywords)
+                    app.topicRepository.updateReplyAndAnalysis(
+                        topic.date, ReplyStatus.REPLIED, jsonStr
+                    )
+                    tvDebugLog.text = tvDebugLog.text.toString() +
+                        "\n✓ DB に保存しました。メイン画面を確認してください。"
+
+                } catch (e: Exception) {
+                    tvDebugLog.text = "❌ エラー: ${e.message}"
+                } finally {
+                    btn.isEnabled = true
+                }
+            }
         }
 
         // ── 左上の戻るボタン: 保存して前の画面へ ──────────────────────

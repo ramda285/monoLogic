@@ -154,6 +154,59 @@
                 android:text="APIキーを保存"
                 android:layout_marginTop="8dp" />
 
+            <!-- 区切り線 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorDivider"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- デバッグセクション -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="デバッグ"
+                android:textSize="13sp"
+                android:letterSpacing="0.05"
+                android:textColor="@color/colorSheetTitle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="開発・テスト用。本番環境では使用しないでください。"
+                android:textSize="11sp"
+                android:textColor="@color/colorTopicLabel"
+                android:layout_marginTop="4dp" />
+
+            <!-- ログ出力エリア -->
+            <TextView
+                android:id="@+id/tvDebugLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="— ログ —"
+                android:textSize="11sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/colorSheetTitle"
+                android:background="@color/colorSurface"
+                android:padding="8dp"
+                android:layout_marginTop="10dp" />
+
+            <Button
+                android:id="@+id/btnDebugPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="テスト投稿（今すぐお題を投稿）"
+                android:layout_marginTop="10dp" />
+
+            <Button
+                android:id="@+id/btnDebugReplyAnalysis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="リプライ読み込み＆単語生成テスト"
+                android:layout_marginTop="4dp" />
+
         </LinearLayout>
     </ScrollView>
 
